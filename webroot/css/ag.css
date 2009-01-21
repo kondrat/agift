@@ -1,0 +1,157 @@
+.menuup {
+	COLOR: #cf0503; 
+	FONT-FAMILY: Arial, Verdana, Arial; 
+	FONT-SIZE: 8pt; FONT-STYLE: normal; 
+	FONT-WEIGHT: bold; 
+	TEXT-ALIGN: center; 
+	TEXT-DECORATION: none
+}
+.menu {
+	COLOR: #ffffff; 
+	FONT-FAMILY: Arial, Verdana, Arial; 
+	FONT-SIZE: 8pt; FONT-STYLE: normal; 
+	FONT-WEIGHT: bold; 
+	TEXT-ALIGN: center; 
+	TEXT-DECORATION: none;
+}
+.menuImg {
+	background: url('../img/knup.jpg') no-repeat;	
+}
+.menuImgUp {
+	background: url('../img/knup0.jpg') no-repeat;	
+}
+
+.menu3 {
+	COLOR: #ffffff; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 8pt; FONT-STYLE: normal; FONT-WEIGHT: bold; TEXT-ALIGN: right; TEXT-DECORATION: none
+}
+
+.menu:hover {
+	COLOR: #c6c6c6; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 8pt; FONT-STYLE: normal; FONT-WEIGHT: bold; TEXT-ALIGN: center; TEXT-DECORATION: none
+}
+.dm {
+	COLOR: #000000; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 8pt; FONT-STYLE: normal; FONT-WEIGHT: bold; TEXT-ALIGN: center; TEXT-DECORATION: none
+}
+.dm:hover {
+	COLOR: #cf0503; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 8pt; FONT-STYLE: normal; FONT-WEIGHT: bold; TEXT-ALIGN: center; TEXT-DECORATION: none
+}
+.catalog {
+	COLOR: #ffffff; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 10pt; FONT-STYLE: normal; FONT-WEIGHT: bold; TEXT-ALIGN: center; TEXT-DECORATION: none
+}
+.h {
+	COLOR: #cf0503; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 11pt; FONT-STYLE: normal; FONT-WEIGHT: bold; TEXT-ALIGN: left; TEXT-DECORATION: none
+}
+.text {
+	COLOR: #000000; 
+	FONT-FAMILY: Arial, Verdana, Arial; 
+	FONT-SIZE: 10pt; 
+	FONT-STYLE: normal; 
+	FONT-WEIGHT: normal; 
+	TEXT-ALIGN: justify; 
+	TEXT-DECORATION: none
+}
+
+.text3 {
+	COLOR: #000000; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 10pt; FONT-STYLE: normal; FONT-WEIGHT: normal; TEXT-ALIGN: left; TEXT-DECORATION: none; padding-left: 10px
+}
+.text2 {
+	COLOR: #cf0503; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 10pt; FONT-STYLE: normal; FONT-WEIGHT: bold; TEXT-ALIGN: left; TEXT-DECORATION: none
+}
+.form {
+	background-color: #ececec;
+	
+}
+.menul {
+	COLOR: #000000; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 9pt; FONT-STYLE: normal; FONT-WEIGHT: normal; TEXT-ALIGN: left; TEXT-DECORATION: none
+}
+.menul:hover {
+	COLOR: #cf0503; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 9pt; FONT-STYLE: normal; FONT-WEIGHT: normal; TEXT-ALIGN: left; TEXT-DECORATION: none
+}
+.menulup {
+	COLOR: #cf0503; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 9pt; FONT-STYLE: normal; FONT-WEIGHT: bold; TEXT-ALIGN: left; TEXT-DECORATION: none
+}
+.menu2 {
+	COLOR: #000000; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 10pt; FONT-STYLE: normal; FONT-WEIGHT: normal; TEXT-ALIGN: justify; TEXT-DECORATION: underline
+}
+.menu2:hover {
+	COLOR: #cf0503; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 10pt; FONT-STYLE: normal; FONT-WEIGHT: normal; TEXT-ALIGN: justify; TEXT-DECORATION: underline
+}
+.news1 {
+	background: url('../img/newsfon1.jpg') no-repeat;
+}
+.news2 {
+	background: url('../img/newsfon.jpg') no-repeat;
+	vertical-align: baseline;
+	padding-top: 5px;
+}
+.menul  a {
+	color: #000;
+	text-decoration: none;
+}
+td.menul li  {
+
+	margin: 0 0 0 -20px;
+}
+.menuliStr {
+	list-style-image: url('../img/str.jpg');	
+}
+.menuliStr2 {
+	list-style-image: url('../img/str2.jpg');
+}
+a.redbold  {
+	color: red;	
+	font-weight: bold;
+}
+.gift {
+	float: left;
+	width: 257px;
+
+	padding: 1px;
+}
+.log {
+	COLOR: #000000; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 8pt; FONT-STYLE: normal; FONT-WEIGHT: normal; TEXT-ALIGN: right; TEXT-DECORATION: none
+}
+
+a.log:hover {
+	COLOR: #cf0503; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 8pt; FONT-STYLE: normal; FONT-WEIGHT: normal; TEXT-ALIGN: right; TEXT-DECORATION: none
+}
+.logup {
+	COLOR: #cf0503; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 8pt; FONT-STYLE: normal; FONT-WEIGHT: normal; TEXT-ALIGN: right; TEXT-DECORATION: none
+}
+a.giftLink {
+	color: black;
+	text-decoration: none;
+}
+a.giftLink:hover {
+	color: black;
+	text-decoration: none;
+}
+
+.add {
+	COLOR: #cf0503; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 10pt; FONT-STYLE: normal; FONT-WEIGHT: NORMAL; TEXT-ALIGN: right; TEXT-DECORATION: none
+}
+
+.submit {
+	width: 40px;
+	COLOR: #000000; FONT-FAMILY: Arial, Verdana, Arial; FONT-SIZE: 8pt; FONT-STYLE: normal; FONT-WEIGHT: normal; TEXT-ALIGN: center; TEXT-DECORATION: none
+}
+.searchform {
+	display: inline;
+	position: relative;
+	top: -1px;
+}
+.searchbutton {
+	display: inline;
+	position: relative;
+	top: 3px;
+}
+.box {
+	position: relative;
+	top: -5px;
+}
+.box2 {
+	position: relative;
+	top: -6px;
+}
+form {
+	margin: 0;
+	}

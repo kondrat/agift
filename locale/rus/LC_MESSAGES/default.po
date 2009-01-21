@@ -1,0 +1,44 @@
+"Project-Id-Version: CakePHP language demon\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2007-09-10 11:01+0200\n"
+"Last-Translator: Vyacheslav Enis <venis@difane.com>\n"
+"Language-Team: Difane team <support@difane.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 16bit\n"
+
+msgid  	"August" 
+msgstr 	"Август" 
+
+msgid	"January" 
+msgstr 	"Январь"
+
+msgid  	"February" 
+msgstr 	"Февраль"
+
+msgid  	"March" 
+msgstr 	"Март"  
+
+msgid  	"April" 
+msgstr 	"Апрель"
+
+msgid  	"May" 
+msgstr 	"Май"
+
+msgid  	"June" 
+msgstr 	"Июнь"
+
+msgid  	"July" 
+msgstr 	"Июль"
+
+msgid  	"September" 
+msgstr 	"Сентябрь"
+
+msgid  	"October" 
+msgstr 	"Октябрь"
+
+msgid  	"November"
+msgstr 	"Ноябрь"
+
+msgid  	"December"
+msgstr 	"Декабрь"

@@ -1,0 +1,14 @@
+config/database.php
+tmp/cache/models/*
+tmp/cache/persistent/*
+tmp/cache/views/*
+tmp/tests/*
+tmp/sessions/*
+tmp/logs/*
+webroot/files/**/*
+webroot/uploads/**/*
+webroot/img/oasis/**/*
+webroot/img/proekt111/**/*
+webroot/img/usb/**/*
+!empty
+!.gitignore
