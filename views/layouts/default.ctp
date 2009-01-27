@@ -1,4 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-ru" lang="ru-ru" >
 <head>
 
 	<?php echo $html->charset(); ?>
@@ -20,9 +21,9 @@
 <?php debug($session->read('Order'));?>
 
 </head>
+
 <body topmargin="0">
-	
-	
+		
 	<div class="header">
 		<?php echo $this->element('menu/menu'); ?>
 		<div class="form">
@@ -77,29 +78,52 @@
 
 
 	<div class="contentright">
-		<?php echo $form->create('Gift', array( 'action' => 'search' )  ); ?>
-		<?php echo $form->text('string', array( 'size' => '85') ); ?>&nbsp;&nbsp;&nbsp;
-		<?php echo $form->submit('button.jpg', array ( 'div' => false) ); ?>
-			<br />
-		<span class="searchtext">
-			<?php echo $form->checkbox('type'); ?>
-				Поиск по артикулам &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<?php echo $html->link('Расширенный поиск', array('controller' => 'Gifts', 'action' => 'extsearch'), array() ); ?>
-		</span>
-		<?php 
-			if ($this->params['action'] != 'extsearch') {
-				echo $form->end();
-			} 
-		?>
+		<div class="search">
+			<?php echo $form->create('Gift', array( 'action' => 'search' )  ); ?>
+			<?php echo $form->text('string', array( 'size' => '85') ); ?>&nbsp;&nbsp;&nbsp;<?php echo $form->submit('button.jpg', array ( 'div' => false) ); ?>
+				<br />
+			<span class="searchtext">
+				<?php echo $form->checkbox('type'); ?>Поиск по артикулам &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $html->link('Расширенный поиск', array('controller' => 'Gifts', 'action' => 'extsearch'), array() ); ?>
+			</span>
+			<?php 
+				if ($this->params['action'] != 'extsearch') {
+					echo $form->end();
+				} 
+			?>
+		</div>
+		
+		<?php if( $twoNews != null && count($twoNews) == 2): ?>
+			<div class="news">
+				НОВОСТИ
+				<div class="newsimg"><img src="img/a_type_ag.jpg" border="0"></div>
+			</div>
+			<div class="newsblock">
+				<div>
+					<?php echo $html->link( date( 'd.m.y', strtotime($twoNews[0]['News']['created']) ).' '. $twoNews[0]['News']['name'], array(), array('class' => 'headernews') ); ?>
+				</div>
+				<div>
+					<?php echo $html->link( $twoNews[0]['News']['shortbody'].' '.$html->image('str.jpg',array('border' => '0') ), array('controller'=>'news', 'action'=>'view', $twoNews[0]['News']['id'] ), array('class' =>'bodynews' ),null, null ) ?>				
+				</div>
+			</div>
+			<div class="newsblock">
+				<div>
+					<?php echo $html->link( date( 'd.m.y', strtotime($twoNews[1]['News']['created']) ).' '. $twoNews[1]['News']['name'], array(), array('class' => 'headernews') ); ?>
+				</div>
+				<div>
+					<?php echo $html->link( $twoNews[1]['News']['shortbody'].' '.$html->image('str.jpg',array('border' => '0') ), array('controller'=>'news', 'action'=>'view', $twoNews[1]['News']['id'] ), array('class' =>'bodynews' ),null, null ) ?>				
+				</div>
+			</div>
+			<div class="arhiv">
+				<br>
+				<?php echo $html->link('Архив новостей &nbsp;'.$html->image('str.jpg', array('border' => '0') ), array('controller'=>'news', 'action'=>'index'), array('class' => 'arhiv'),null,null ); ?>
+			</div>
+		<?php endif ?>
 	</div>
 
 <!-- news 
 
-	<table valign="top" cellspacing="0" cellpadding="0" border="0" width="625" height="84">
-		<tr>
+
 			<?php if( $twoNews != null && count($twoNews) == 2): ?>
-        	<td class="news1" width="11"></td>	
-        		<td class="news2 menulup" width="299" >
         			
         			<?php echo date( 'd.m.y', strtotime($twoNews[0]['News']['created']) ).' '. $twoNews[0]['News']['name'] ?>
         			
@@ -125,8 +149,7 @@
         		</td>
         	
 			<?php endif ?>
-		</tr>
-	</table>
+
 -->
 	<div class="alfagifts">		
 			<div class="left3col"></div>
@@ -141,12 +164,11 @@
 	</div>
 		
 
-	<div class="maincontent">
-
-		<div class="leftcontent3col"></div>
-
-
-		<div class="maincontent3col">	
+	<div class="mainblock">
+	
+		<div class="pen"><?php echo $html->image('pen.gif', array('border' => '0') );?></div>
+		
+		<div class="content">	
 
 
 			<?php 
@@ -181,15 +203,11 @@
 		</div>
 
 
-		<div class="rightcontent3col">
-			<div class="pen"><?php echo $html->image('pen.gif', array('border' => '0') );?></div>
-		</div>
-
 	</div>
 
 
 
-
+	<br clear="all">
 
 
 
@@ -197,7 +215,7 @@
 	<div class="footer">
 		<div class="textfooter">Наш адрес: 109052, г. Москва, ул.Нижегородская, д. 29-33, стр. 15, офис 336. Тел./факс: (495) 589-88-09, 665-61-32</div>
 		<div class="menu_down">
-			<?php echo $html->link( 'Главная', '/' ); ?>&nbsp;&nbsp;&nbsp;<?php echo $html->link( 'КАТАЛОГИ', '/' ); ?>&nbsp;&nbsp;&nbsp;<?php echo $html->link( 'О КОМПАНИИ', '/' ); ?>&nbsp;&nbsp;&nbsp;<?php echo $html->link( 'Корзина', '/' ); ?>&nbsp;&nbsp;&nbsp;<?php echo $html->link( 'ОТЗЫВЫ', '/' ); ?>&nbsp;&nbsp;&nbsp;<?php echo $html->link( 'Контакты', '/' ); ?>
+			<?php echo $html->link( 'ГЛАВНАЯ', '/' ); ?>&nbsp;&nbsp;&nbsp;<?php echo $html->link( 'КАТАЛОГИ', '/' ); ?>&nbsp;&nbsp;&nbsp;<?php echo $html->link( 'О КОМПАНИИ', '/' ); ?>&nbsp;&nbsp;&nbsp;<?php echo $html->link( 'КОРЗИНА', '/' ); ?>&nbsp;&nbsp;&nbsp;<?php echo $html->link( 'ОТЗЫВЫ', '/' ); ?>&nbsp;&nbsp;&nbsp;<?php echo $html->link( 'КОНТАКТЫ', '/' ); ?>
 		</div>
 	</div>
 

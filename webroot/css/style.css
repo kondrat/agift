@@ -67,21 +67,21 @@
 .contentleft {
 	background-image: url(../img/fon.jpg);
 	width: 95px;
-	height: 138px;
+	height: 184px;
 	padding: 0px;
 	float:left;
 }
 	
 .contentcenter {
 	width: 200px;
-	height: 138px;
+	height: 184px;
 	padding:0px;
 	float:left;
 }
 	
 .contentright {
 	width: 692px;
-	height: 138px;
+	height: 184px;
 	padding:0px;
 	float:left;
 	border-right: 1px solid;
@@ -163,6 +163,9 @@ a.opacity:hover img {
 	-moz-opacity: 1.0;
 	opacity: 1.0;
 }
+.search {
+	height: 45px;
+}
 .searchtext {
 	font-family: Arial, Verdana, Helvetica, Sans-serif;
 	color: #000000;
@@ -226,19 +229,22 @@ a.opacity:hover img {
 	border-color: #dededc;
 	float:left;
 }
-.maincontent {
-	width: 1024px;
-	height: 100%;
-}
-.leftcontent3col {
-	background-image: url(../img/fon.jpg);
-	width: 95px;
-	height: 100%;
-	padding: 0px;
-	float:left;
-}
-.maincontent3col {
+.mainblock {
 	position: relative;
+	width: 987px;
+	float:left;
+	background-image: url(../img/fon.jpg);
+	background-repeat: repeat-y;
+	border-right: 1px solid;
+	border-color: #dededc;
+	min-height: 510px;
+	height:auto !important;
+	height:510px;
+}
+.content {
+	position: relative;
+	left: 95px;
+	width: 840px;
 	font-family: Arial, Verdana, Helvetica, Sans-serif;
 	text-align: justify;
 	color: #000000;
@@ -246,21 +252,7 @@ a.opacity:hover img {
 	font-weight: normal;
 	text-decoration: none;
 	font-size: 12pt;
-	width: 822px;
-	height: 100%;
-	padding: 0px;
-	float:left;
 }
-.rightcontent3col {
-	position: relative;
-	width: 70px;
-	height: 100%;
-	padding: 0px;
-	border-right: 1px solid;
-	border-color: #dededc;
-	float:left;
-}
-
 .a_type_ag {
 	position: absolute;
 	top: 28px;
@@ -269,8 +261,7 @@ a.opacity:hover img {
 .pen {
 	position: absolute;
 	top: 10px;
-	left: -10px;
-	z-index: 2;
+	left: 920px;
 }
 .footer {
 	position: relative;
@@ -279,7 +270,6 @@ a.opacity:hover img {
 	background-image: url(../img/footer.jpg);
 	border-right: 1px solid;
 	border-color: #dededc;
-	float: left;
 }
 .textfooter {
 	position: absolute;
@@ -309,4 +299,118 @@ a.opacity:hover img {
 }
 .menu_down a:hover {
 	text-decoration: underline;
+}
+.news {
+	position: relative;
+	width: 610px;
+	height: 34px;
+	background-image: url(../img/news_fon.jpg);
+	font-family: Arial, Verdana, Helvetica, Sans-serif;
+	text-align: right;
+	font-size: 12pt;
+	color: #d91d13;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration: none;
+}
+.newsimg {
+	position: absolute;
+	left: 0px;
+	top: 16px;
+}
+.newsblock {
+	width: 285px;
+	float: left;
+	margin-right: 20px;
+	margin-left: 20px;
+}
+.headernews {
+	font-family: Arial, Verdana, Helvetica, Sans-serif;
+	text-align: left;
+	font-size: 10pt;
+	color: #d91d13;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration: none;
+}
+.bodynews {
+	font-family: Arial, Verdana, Helvetica, Sans-serif;
+	text-align: left;
+	font-size: 10pt;
+	color: #000000;
+	font-style: normal;
+	font-weight: normal;
+	text-decoration: none;
+}
+.arhiv {
+	width: 610px;
+	font-family: Arial, Verdana, Helvetica, Sans-serif;
+	text-align: right;
+	font-size: 11pt;
+	color: #000000;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration: none;
+}
+.menu_catalog {
+	margin-left: 95px;
+	margin-right: 10px;
+	float: left;
+	width: 250px;
+	height: 100%;
+	font-family: Arial, Verdana, Helvetica, Sans-serif;
+	text-align: left;
+	color: #000000;
+	font-style: normal;
+	font-weight: normal;
+	text-decoration: none;
+	font-size: 10pt;
+}
+.menu_catalog a{
+	color: #000000;
+	text-decoration: none;
+}
+.menu_catalog a:hover{
+	color: #d91d13;
+}
+.catalog {
+	width: 180px;
+	height: 300px;
+	vertical-align: bottom;
+	float: left;
+}
+.artikul {
+	font-family: Arial, Verdana, Helvetica, Sans-serif;
+	text-align: center;
+	color: #d91d13;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 10pt;
+}
+.header_catalog {
+	position: relative;
+	width: 820px;
+	margin-left: 95px;
+}
+.page {
+	position: absolute;
+	left: 600px;
+	top: 20px;
+	font-family: Arial, Verdana, Helvetica, Sans-serif;
+	text-align: center;
+	color: #000000;
+	font-style: normal;
+	font-weight: normal;
+	text-decoration: none;
+	font-size: 10pt;
+}
+.product {
+	font-family: Arial, Verdana, Helvetica, Sans-serif;
+	text-align: center;
+	color: #000000;
+	font-style: normal;
+	font-weight: normal;
+	text-decoration: none;
+	font-size: 10pt;
 }
