@@ -52,7 +52,7 @@
 		</div>
 	</div>
 
-
+	<div class="menu_block">
 	<div class="contentleft"></div>
 
 	<div class="contentcenter">
@@ -95,7 +95,7 @@
 		<?php if( $twoNews != null && count($twoNews) == 2): ?>
 			<div class="news">
 				НОВОСТИ
-				<div class="newsimg"><img src="img/a_type_ag.jpg" border="0"></div>
+				<div class="newsimg"><?php echo $html->image('a_type_ag.jpg', array( 'border' => '0') ); ?></div>
 			</div>
 			<div class="newsblock">
 				<div>
@@ -119,7 +119,7 @@
 			</div>
 		<?php endif ?>
 	</div>
-
+	
 <!-- news 
 
 
@@ -147,10 +147,12 @@
         			<?php echo $html->link( $twoNews[1]['News']['shortbody'].' »', array('controller'=>'news', 'action'=>'view', $twoNews[1]['News']['id'] ), array('class' =>'menul' ) ) ?>
 
         		</td>
+	
         	
 			<?php endif ?>
-
+	</div>
 -->
+	
 	<div class="alfagifts">		
 			<div class="left3col"></div>
 		

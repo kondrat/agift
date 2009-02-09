@@ -37,11 +37,6 @@ class AppController extends Controller {
 		
 		//$this->Auth->actionPath = 'controllers/';
 
-   		$this->L10n = new L10n();
-   		$this->L10n->get("ru");
-   
-   		Configure::write('Config.language', "ru");
-   		    	//debug($this->Session->read());
 	}
 //--------------------------------------------------------------------
 

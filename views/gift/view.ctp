@@ -133,9 +133,10 @@
     	<td class=" <?php echo 'small_img ' .$supplierType?>" >
     		<?php if( is_array( $gift['Image'] ) && count($gift['Image'])> 1 ) :?>
 	    		<?php foreach( $gift['Image'] as $thumb ): ?>
-	    			<a href=
-	    			<?php echo '"/za/img/'.$supplierType.'/b/'.$thumb['img'].'"' ?>
-	    			 
+	    			<a href =
+	    			<?php //echo $html->link( $html->image($supplierType.'/s/'.$thumb['img'],  array('border' => 0, 'id' => $thumb['img']) ),array('controller' => false,'action' => false, WWW_ROOT.'img/'.$supplierType.'/b/'.$thumb['img']) , null, null, false );?>
+	    			<?php echo '"/img/'.$supplierType.'/b/'.$thumb['img'].'"' ?>
+	    			>
 	    			<?php  echo $html->image($supplierType.'/s/'.$thumb['img'],  array('border' => 0, 'id' => $thumb['img']) );?> 
 	    			</a>
 	    			&nbsp;&nbsp;

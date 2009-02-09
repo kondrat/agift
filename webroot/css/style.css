@@ -64,6 +64,10 @@
 	left: -40px;
 	z-index: 1;
 }
+.menu_block {
+	height: 184px;
+	width: 988px;
+}
 .contentleft {
 	background-image: url(../img/fon.jpg);
 	width: 95px;
@@ -413,4 +417,40 @@ a.opacity:hover img {
 	font-weight: normal;
 	text-decoration: none;
 	font-size: 10pt;
+}
+/*----------------left menu ------------------*/
+/*
+.menu_catalog {
+	COLOR: #000000;
+	FONT-FAMILY: Arial, Verdana, Arial; 
+	FONT-SIZE: 9pt; FONT-STYLE: normal; 
+	FONT-WEIGHT: normal; TEXT-ALIGN: left; 
+	TEXT-DECORATION: none
+}
+.menul:hover {
+	COLOR: #cf0503; 
+	FONT-FAMILY: Arial, Verdana, Arial; 
+	FONT-SIZE: 9pt; FONT-STYLE: normal; 
+	FONT-WEIGHT: normal; TEXT-ALIGN: left; 
+	TEXT-DECORATION: none
+}
+
+.menul  a {
+	color: #000;
+	text-decoration: none;
+}
+*/
+.menu_catalog li  {
+	margin: 0 0 0 -20px;
+}
+
+.menuliStr {
+	list-style-image: url('../img/str.jpg');	
+}
+.menuliStr2 {
+	list-style-image: url('../img/str2.jpg');
+}
+a.redbold  {
+	color: red;	
+	font-weight: bold;
 }

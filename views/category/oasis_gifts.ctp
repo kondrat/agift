@@ -1,16 +1,9 @@
 <?php //debug($gifts);?>
 
-
-<table cellspacing="0" cellpadding="0" border="0" width="819" class="text">
-	<tr>
-	
-		<td valign="top" width="230" class="menul">
-		
+	<div class="menu_catalog">
 		<? echo $tree->generate($stuff , array('element' => 'thisone') ); ?>
-		
-		<td width="70"></td>		
+	</div>	
 
-	<td width="519" class="text"><!-- column for gifts output  -->
 	<?php //debug($gifts);?>
 <?php 
 	//<!--          -----------------------Catalog output ---------------------------------   -->
@@ -91,9 +84,4 @@
 	//<!--          -----------------------END of Catalog output --------------------------------- -->
 ?>
 	
-	</td><!-- column for gifts output  -->
-	
-	
-</tr>
-</table>
 
