@@ -17,39 +17,31 @@
 		echo $scripts_for_layout;
 	?>
 
-<?php debug($session->read('userCart'));?>
-<?php debug($session->read('Order'));?>
+<?php //debug($session->read('userCart'));?>
+<?php //debug($session->read('Order'));?>
 
 </head>
 
 <body topmargin="0">
 		
 	<div class="header">
-		<?php echo $this->element('menu/menu'); ?>
+		<cake:nocache>
+			<?php echo $this->element('menu/menu', array('cache' => array('key' => 'topmenu', 'time' => '+360 days') ) ); ?>
+		</cake:nocache>	
 		<div class="form">
+			<cake:nocache>
 			<?php if( $session->check('Auth.User.id') == false ): ?>
-				<?php echo $form->create('User', array( 'action' => 'login' ), array('id' => 'rec2') ); ?>		
-					<div class="headerfield">Вход в личный кабинет</div>
-					<div class="formfield">Логин:</div>
-						<?php echo $form->input('username', array('type' => 'text', 'size' => 20, 'div'=> null, 'label' => false, 'error' => false) );?>
-						<br />
-					<div class="formfield">Пароль:</div>
-						<?php echo $form->input('password', array( 'size' => 11,  'label' => false, 'div' => false) );?>
-						<?php echo $form->hidden('onfly', array('value' => true));?>
-						<?php echo $form->submit( "Вход", array( 'class' => 'submit','div' => false) ); ?>
-						<br/>
-						<?php echo $html->link("Забыли пароль?", array( 'controller' => 'users', 'action' => 'password_reset') ); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						<?php echo $html->link( 'Регистрация', array( 'controller' => 'users', 'action' => 'reg' ) ); ?>
-				<?php echo $form->end(); ?>
-			<?php else: ?>
-				Личный кабинет:
-		 		<?php echo '<span style=" font-weight: bold">'. $session->read('Auth.User.username').'</span>'; ?>						
-					<br />			
-				<?php echo $html->link('История заказов', array('controller' => 'orders', 'action' => 'history') ); ?>
-					<br />
-				<?php echo $html->link('Выход', array('controller' => 'users', 'action' => 'logout') ); ?>		
+				<?php echo $this->element('loginform/loginform', array('cache' => array('key' => 'loginform', 'time' => '+360 days') ) ); ?>
 			<?php endif ?>
+			</cake:nocache>
+			<cake:nocache>
+			<?php if( $session->check('Auth.User.id')): ?>
+				<?php echo $this->element('menu/logedin', array('cache' => array('key' => 'logedin'.$session->read('Auth.User.id'), 'time' => '+360 days') ) ); ?>
+			<?php endif ?>
+			</cake:nocache>
+			
 		</div>
+		</cake:nocache>	
 	</div>
 
 	<div class="menu_block">
@@ -91,33 +83,11 @@
 				} 
 			?>
 		</div>
-		
-		<?php if( $twoNews != null && count($twoNews) == 2): ?>
-			<div class="news">
-				НОВОСТИ
-				<div class="newsimg"><?php echo $html->image('a_type_ag.jpg', array( 'border' => '0') ); ?></div>
-			</div>
-			<div class="newsblock">
-				<div>
-					<?php echo $html->link( date( 'd.m.y', strtotime($twoNews[0]['News']['created']) ).' '. $twoNews[0]['News']['name'], array(), array('class' => 'headernews') ); ?>
-				</div>
-				<div>
-					<?php echo $html->link( $twoNews[0]['News']['shortbody'].' '.$html->image('str.jpg',array('border' => '0') ), array('controller'=>'news', 'action'=>'view', $twoNews[0]['News']['id'] ), array('class' =>'bodynews' ),null, null ) ?>				
-				</div>
-			</div>
-			<div class="newsblock">
-				<div>
-					<?php echo $html->link( date( 'd.m.y', strtotime($twoNews[1]['News']['created']) ).' '. $twoNews[1]['News']['name'], array(), array('class' => 'headernews') ); ?>
-				</div>
-				<div>
-					<?php echo $html->link( $twoNews[1]['News']['shortbody'].' '.$html->image('str.jpg',array('border' => '0') ), array('controller'=>'news', 'action'=>'view', $twoNews[1]['News']['id'] ), array('class' =>'bodynews' ),null, null ) ?>				
-				</div>
-			</div>
-			<div class="arhiv">
-				<br>
-				<?php echo $html->link('Архив новостей &nbsp;'.$html->image('str.jpg', array('border' => '0') ), array('controller'=>'news', 'action'=>'index'), array('class' => 'arhiv'),null,null ); ?>
-			</div>
-		<?php endif ?>
+		<cake:nocache>
+			<?php if (isset($this->params['url']['url'])&&$this->params['url']['url']=='/'):?>
+				<?php echo $this->element('news/twoNews', array('cache' => array('key' => 'twoNews', 'time' => '+300 days') ) ); ?>
+			<?php endif ?>
+		</cake:nocache>
 	</div>
 	
 <!-- news 

@@ -357,7 +357,7 @@ a.opacity:hover img {
 	text-decoration: none;
 }
 .menu_catalog {
-	margin-left: 95px;
+	/*margin-left: 95px;*/
 	margin-right: 10px;
 	float: left;
 	width: 250px;
@@ -395,7 +395,7 @@ a.opacity:hover img {
 .header_catalog {
 	position: relative;
 	width: 820px;
-	margin-left: 95px;
+	/*margin-left: 95px;*/
 }
 .page {
 	position: absolute;
@@ -453,4 +453,29 @@ a.opacity:hover img {
 a.redbold  {
 	color: red;	
 	font-weight: bold;
+}
+/* wrapper for the gifts output in oasis_gifts */
+.giftsList{
+	float: left;
+	width:550px;
+}
+/*paginator class*/
+.menu2 {
+	text-decoration: none;
+	color:#000;
+	font-weight: bold;
+}
+a.menu2:hover {
+	text-decoration:underline;
+}
+a.menu2:visited {
+	color: #000;
+}
+div.page span.current {
+	color: red;
+	font-weight: bold;
+}
+div.menu2 {
+	display:inline;
+	color: #ccc;
 }

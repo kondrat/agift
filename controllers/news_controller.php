@@ -14,8 +14,19 @@ class NewsController extends AppController {
 //--------------------------------------------------------------------
     function index(){
 		$this->subheaderTitle = 'НОВОСТИ';
-		$this->News->recursive = 0;
-		$this->set('listNews', $this->paginate());
+		$this->News->recursive = 0;		
+			if (isset($this->params['requested'])) {
+				$twoNews = $this->News->find('all', array( 'conditions' => array(), 'order' => array( 'News.created' => 'desc'), 'limit' => 2 ) );
+				return $twoNews;
+			} else {
+				$this->cacheAction = "10000 hours";
+				$this->set('listNews', $this->paginate());
+			}
+			
+			//$text = Flay::fragment($a[0]['News']['body'],7);
+			//debug( $text );
+			
+
     }
 //--------------------------------------------------------------------
 	function add() {

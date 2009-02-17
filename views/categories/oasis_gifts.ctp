@@ -1,0 +1,71 @@
+<div class="header_catalog">
+	<?php echo $html->image('logo_oasis.jpg', array('border'=>'0'));?>
+	<div class="page">
+	<?php 
+		//<!--          -----------------------Catalog output ---------------------------------   -->
+		$this->params['pass'][1] = null;
+	?>
+			<?php if( isset($this->params['paging']['Gift']['pageCount']) && $this->params['paging']['Gift']['pageCount'] > 1 ): ?>
+				<?php echo $paginator->prev('Назад', array('url' => array( $this->params['pass'][0] ), 'class' => 'menu2' ) , null,  array('class'=>'menu2'));?>
+  				<?php echo $paginator->numbers( array('modulus'=>'5','separator'=>' ','url' => array( $this->params['pass'][0] ), 'class' => 'menu2' ), null );?>
+				<?php echo $paginator->next('Вперед', array('url' => array( $this->params['pass'][0] ), 'class' => 'menu2' ), null, array('class'=>'menu2'));?>
+			<?php endif ?>
+
+	</div>
+	<div class="menu_catalog">
+		<? echo $tree->generate($stuff , array('element' => 'thisone') ); ?>
+	</div>	
+	
+	<div class="giftsList">
+	
+		<?php $i = 0; ?>
+		<?php foreach ($gifts as $gift): ?>
+		
+		<div class="catalog">
+			<div class="artikul">
+				Арт. <?php echo $gift['Gift']['code'];?>
+			</div>
+			<br />
+			<div align="center" class="product">
+			<?php echo $html->link( $html->image('oasis/s/'.$gift['Image'][0]['img'], array('border' => 0) ), array( 'controller' => 'gifts', 'action' => 'view',$gift['Gift']['id'])  , array(), false, false );?>
+				<br>
+			<?php echo $gift['Gift']['name']; ?>
+				<br>
+			<?php if (isset($gift['Gift']['packsize']) && $gift['Gift']['packsize'] != null): ?>
+				Габариты: <?php echo $gift['Gift']['packsize'];?> см <br>
+			<?php endif ?>
+			<?php if (isset($gift['Gift']['material']) && $gift['Gift']['material'] != null): ?>
+				Материал: <?php echo $gift['Gift']['material'];?> <br>
+			<?php endif ?>
+				<br>
+				<b>Цена: <?php echo $gift['Gift']['price'];?> руб.</b> 
+				<br>
+			</div>
+		</div>
+		<?php endforeach ?>
+
+					
+		            
+		<?php /*
+		            echo '<td width="20" height="0">'.$html->link( $html->image('proekt/b_icon.gif', array('border' => 0) ), array( 'controller' => 'orders', 'action' => 'add',$gift['Gift']['id'])  , array(), false, false ).'</td>';		           
+		            //echo '<b>Размер упаковки. </b>'.$gift['Gift']['packsize'].' см<br>';
+		            //echo '<b>Тип упаковки. </b>'.$gift['Gift']['packtype'].'<br>';
+		            	
+		
+		
+		            echo '<br>'. $html->link( '[Подробно о товаре]', array('controller' => 'Gifts', 'action' => 'view',$gift['Gift']['id']), array('class' => 'giftLink') ).'</td></tr></table>';
+		
+					echo '</div><!-- gift -->';
+					
+						if ($i++ % 2 != 0) {
+							echo '<div style="clear: both"></div>';
+						}
+				}
+			*/
+		?>			
+		
+	</div><!-- giftsList -->
+</div>
+
+	
+

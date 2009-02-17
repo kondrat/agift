@@ -1,8 +1,8 @@
 <?php
 class CategoriesController extends AppController {
-	var $name = 'Category';
+	var $name = 'Categories';
 	var $uses = array('Category', 'Gifts', 'Image');
-	var $paginate = array('limit' => 6);
+	var $paginate = array('limit' => 9);
 //--------------------------------------------------------------------	
   	function beforeFilter() {
         $this->Auth->allow('index','add','view','proekt111', 'oasis', 'usb');
@@ -15,7 +15,7 @@ class CategoriesController extends AppController {
 	}
 //--------------------------------------------------------------------
     function proekt111(){
-
+		$this->cacheAction = "10000 hours";
 		$this->subheaderTitle = 'КАТАЛОГ СУВЕНИРОВ "ПРОЕКТ 111"';
     	//some vars init.
 		$cat = array();
@@ -100,6 +100,7 @@ class CategoriesController extends AppController {
 //--------------------------------------------------------------------
 
     function oasis(){
+    	$this->cacheAction = "10000 hours";
     	//some vars init.
 		$cat = array();
 		$pageOutput = null;
@@ -194,6 +195,7 @@ class CategoriesController extends AppController {
     }
 //--------------------------------------------------------------------
     function usb(){
+    	$this->cacheAction = "10000 hours";
     	//some vars init.
 		$cat = array();
 		$pageOutput = null;
