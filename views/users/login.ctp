@@ -14,14 +14,14 @@
 <tr>
 	<td height="40" width="120"><b>Логин:</b></td>
 	<td width="250">
-		<?php echo $form->input('username', array('type' => 'text', 'size' => 20,'class' => 'form',  'label' => false) );?>
+		<?php echo $form->input('username', array('type' => 'text', 'size' => 20,'class' => '',  'label' => false) );?>
 		<?php echo $form->error( 'username', array('class' => 'error', 'style' => 'color: red') ); ?>
 	</td>
 </tr>
 <tr>
 	<td height="40" width="120"><b>Пароль:</b></td>
 	<td width="250">
-		<?php echo $form->input('password', array( 'size' => 20,'class' => 'form',  'label' => false) );?>
+		<?php echo $form->input('password', array( 'size' => 20,'class' => '',  'label' => false) );?>
 	</td>
 </tr>
 <tr>
@@ -39,7 +39,6 @@
 
 	<?php echo $form->end( "Войти" ); ?>
 	
-	</form>
 	</td>
 </tr>
 </table>
