@@ -1,10 +1,9 @@
 <?php
-uses('L10n');
 class AppController extends Controller {
 	var $components      = array('Acl', 'Auth', 'RequestHandler', 'Email', 'Cookie','DebugKit.Toolbar');
     var $helpers         = array('Javascript', 'Html', 'Form', 'Menu', 'Tree', 'Cache');
     var $publicControllers = array('pages', 'test');
-    var $uses = array('Order');
+   // var $uses = array('Order');
    	var $subheaderTitle = 'Alfa Gifts - сувенирная продукция';
 //--------------------------------------------------------------------
 	function beforeFilter() {
@@ -45,15 +44,16 @@ class AppController extends Controller {
 		$this->set('subheaderTitle', $this->subheaderTitle);
 		
 		//set count orders for reged User
+		/*
 		if ($currentUser =$this->Session->read('Auth.User.id') ) {
 			$this->Order->recursive = -1;
 			$currentOrder = $this->Order->find('first', array( 'conditions' => array('Order.user_id' => $currentUser, 'Order.status' => 1) ) );
-			//debug($currentOrder);
+
 			if( isset($currentOrder['Order']['line_item_count']) && $currentOrder['Order']['line_item_count'] > 0 ) {
 				$this->set('currentOrderTotal', $currentOrder['Order']['line_item_count'] );
 			}
 		}
-		
+		*/
 		if (Configure::read('debug') == 0){
 			@ob_start ('ob_gzhandler');
 			header('Content-type: text/html; charset: UTF-8');

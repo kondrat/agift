@@ -27,21 +27,19 @@
 	<div class="header">
 		<cake:nocache>
 			<?php echo $this->element('menu/menu', array('cache' => array('key' => 'topmenu', 'time' => '+360 days') ) ); ?>
-		</cake:nocache>	
-		<div class="form">
-			<cake:nocache>
-			<?php if( $session->check('Auth.User.id') == false ): ?>
-				<?php echo $this->element('loginform/loginform', array('cache' => array('key' => 'loginform', 'time' => '+360 days') ) ); ?>
-			<?php endif ?>
-			</cake:nocache>
-			<cake:nocache>
-			<?php if( $session->check('Auth.User.id')): ?>
-				<?php echo $this->element('menu/logedin', array('cache' => array('key' => 'logedin'.$session->read('Auth.User.id'), 'time' => '+360 days') ) ); ?>
-			<?php endif ?>
-			</cake:nocache>
-			
-		</div>
-		</cake:nocache>	
+		</cake:nocache>
+			<div class="form">
+		<cake:nocache>
+				<?php if( $session->check('Auth.User.id') == false ): ?>
+					<?php echo $this->element('loginform/loginform',array('cache' => array('key' => 'loginform', 'time' => '+360 days') ) ); ?>
+				<?php endif ?>
+		</cake:nocache>
+		<cake:nocache>
+				<?php if( $session->check('Auth.User.id')): ?>
+					<?php echo $this->element('loginform/logedin', array('cache' => array('key' => 'login'.$session->read('Auth.User.id'), 'time' => '+3 days') ) ); ?>
+				<?php endif ?>
+		</cake:nocache>			
+			</div>
 	</div>
 
 	<div class="menu_block">
@@ -90,38 +88,6 @@
 		</cake:nocache>
 	</div>
 	
-<!-- news 
-
-
-			<?php if( $twoNews != null && count($twoNews) == 2): ?>
-        			
-        			<?php echo date( 'd.m.y', strtotime($twoNews[0]['News']['created']) ).' '. $twoNews[0]['News']['name'] ?>
-        			
-        			<br>
-        			
-        			<?php echo $html->link( $twoNews[0]['News']['shortbody'].' »', array('controller'=>'news', 'action'=>'view', $twoNews[0]['News']['id'] ), array('class' =>'menul' ) ) ?>
-        				
-
-        		</td>
-        	
-        		
-        	<td width="5"></td>
-        	
-        	<td class="news1" width="11"></td>	
-        		<td class="news2 menulup" width="299" >
-        			
-        			<?php echo date( 'd.m.y', strtotime($twoNews[1]['News']['created']) ).' '. $twoNews[1]['News']['name'] ?>
-        			
-        			<br>
-        			
-        			<?php echo $html->link( $twoNews[1]['News']['shortbody'].' »', array('controller'=>'news', 'action'=>'view', $twoNews[1]['News']['id'] ), array('class' =>'menul' ) ) ?>
-
-        		</td>
-	
-        	
-			<?php endif ?>
-	</div>
--->
 	
 	<div class="alfagifts">		
 			<div class="left3col"></div>
@@ -142,9 +108,9 @@
 		
 		<div class="content">	
 
-
+		<cake:nocache>
 			<?php 
-
+				
 					if( $session->check('userCart.countTempOrders')  ) {
 						echo '<div class="add" >';
 						echo $html->link( 'Товаров в корзине: ', array('controller' => 'orders', 'action' => 'index'), array('style' => "text-decoration: none; color: red;" ) );
@@ -152,12 +118,13 @@
 						echo '</div';
 					}
 
-				?>		
+			?>	
+		</cake:nocache>	
 
 
 
 
-
+		<cake:nocache>
 			<?php
 			
 				if ($session->check('Message.flash')):
@@ -169,7 +136,7 @@
 				endif;
 				
 			?>
-
+		</cake:nocache>
 			<?php echo $content_for_layout; ?>
 
 		</div>
@@ -196,6 +163,6 @@
 
 </body>
 
-	<?php echo $cakeDebug; ?>
+	<?php //echo $cakeDebug; ?>
 
 </html>
