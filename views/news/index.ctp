@@ -1,9 +1,5 @@
-
-<p>
-    <?php
-    	//echo $paginator->counter( array( 'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true) ));
-    ?>
-</p>
+<br /><br /> 
+<?php if( isset($this->params['paging']['News']['pageCount']) && $this->params['paging']['News']['pageCount'] > 1 ): ?>
 <div class="paging">
 	<?php echo $paginator->sort('Сортировать по дате','created');?>
 	<table>
@@ -14,11 +10,7 @@
 		</tr>
 	</table>
 </div>
-
-	<?php //debug($listNews);?>
-	
-
-	
+<?php endif ?>	
 	
 	<?php foreach($listNews as $list): ?>
 	<?php echo $html->link( date( 'd.m.y', strtotime($list['News']['created']) ).' '.$list['News']['name'] , array('controller' => 'News', 'action' => 'view', $list['News']['id']), array('class' => 'menulup') ) ;?>

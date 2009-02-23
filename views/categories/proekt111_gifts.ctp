@@ -1,5 +1,5 @@
 <div class="header_catalog">
-	<?php echo $html->image('logo_oasis.jpg', array('border'=>'0'));?>
+	<?php echo $html->image('logo_proekt.jpg', array('border'=>'0'));?>
 	<div class="page">
 	<?php 
 		//<!--          -----------------------Catalog output ---------------------------------   -->
@@ -39,7 +39,10 @@
 			<?php endif ?>
 				<br>
 				<b>Цена: <?php echo $gift['Gift']['price'];?> руб.</b> 
-				<br>
+				&nbsp;&nbsp;&nbsp;
+				<a href=""><img src="b_icon.gif" border="0"></a>
+				<?php echo  $html->link( $html->image('proekt/b_icon.gif', array('border' => 0) ),  array( 'controller' => 'orders', 'action' => 'add',$gift['Gift']['id']), array(), false, false ); ?>
+				<br />
 			</div>
 		</div>
 		<?php endforeach ?>

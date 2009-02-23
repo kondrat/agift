@@ -2,7 +2,7 @@
 // app/models/category.php
 class Category extends AppModel {
 	var $name = 'Category';
-	var $actsAs = array('Tree');
+	var $actsAs = array('Tree','Containable');
 
 //--------------------------------------------------------------------
 	//The Associations below have been created with all possible keys, those that are not needed can be removed

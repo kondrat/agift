@@ -56,7 +56,7 @@
     	<br>
     	
 
-    	<?php echo  $html->link( $html->image('proekt/b_icon.gif', array('border' => 0) ).'<br />Добавить товар в корзину',  array( 'controller' => 'orders', 'action' => 'add',$gift['Gift']['id']), array('class' => 'text'), false, false ); ?>
+    	<?php echo  $html->link( $html->image('proekt/b_icon.gif', array('border' => 0) ).'<br /><font color="#d91d13">Добавить товар в корзину</font>',  array( 'controller' => 'orders', 'action' => 'add',$gift['Gift']['id']), array('class' => 'text'), false, false ); ?>
     	<br><br>
     	<b>Характеристики предмета</b>
      <br><br>

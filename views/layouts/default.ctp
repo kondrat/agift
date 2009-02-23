@@ -115,7 +115,7 @@
 						echo '<div class="add" >';
 						echo $html->link( 'Товаров в корзине: ', array('controller' => 'orders', 'action' => 'index'), array('style' => "text-decoration: none; color: red;" ) );
 						echo $session->read('userCart.countTempOrders');
-						echo '</div';
+						echo '</div>';
 					}
 
 			?>	

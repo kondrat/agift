@@ -1,5 +1,27 @@
 <div class="header_catalog">
-	<?php echo $html->image('logo_oasis.jpg', array('border'=>'0'));?>
+	<?php 
+		if ( isset($stuff['0']['Category']['parent_id']) ) {
+			$logoImage = null;
+			switch($stuff['0']['Category']['parent_id']) {
+				case 143:
+					$logoImage = 'logo_oasis.jpg';
+					break;
+				case 137: 
+					$logoImage = 'logo_oasis.jpg';
+					break;
+				case 228: 
+					$logoImage = 'logo_ferre.jpg';
+					break;
+				case 210: 
+					$logoImage = 'logo_15.jpg';
+					break;
+				default:
+					$logoImage = 'logo_oasis.jpg';
+					break;				
+			}
+			echo $html->image($logoImage, array('border'=>'0'));
+		}
+	?>
 	<div class="page">
 	<?php 
 		//<!--          -----------------------Catalog output ---------------------------------   -->
@@ -39,30 +61,12 @@
 			<?php endif ?>
 				<br>
 				<b>Цена: <?php echo $gift['Gift']['price'];?> руб.</b> 
-				<br>
+				&nbsp;&nbsp;&nbsp;
+				<?php echo  $html->link( $html->image('proekt/b_icon.gif', array('border' => 0) ),  array( 'controller' => 'orders', 'action' => 'add',$gift['Gift']['id']), array(), false, false ); ?>
+				<br />
 			</div>
 		</div>
-		<?php endforeach ?>
-
-					
-		            
-		<?php /*
-		            echo '<td width="20" height="0">'.$html->link( $html->image('proekt/b_icon.gif', array('border' => 0) ), array( 'controller' => 'orders', 'action' => 'add',$gift['Gift']['id'])  , array(), false, false ).'</td>';		           
-		            //echo '<b>Размер упаковки. </b>'.$gift['Gift']['packsize'].' см<br>';
-		            //echo '<b>Тип упаковки. </b>'.$gift['Gift']['packtype'].'<br>';
-		            	
-		
-		
-		            echo '<br>'. $html->link( '[Подробно о товаре]', array('controller' => 'Gifts', 'action' => 'view',$gift['Gift']['id']), array('class' => 'giftLink') ).'</td></tr></table>';
-		
-					echo '</div><!-- gift -->';
-					
-						if ($i++ % 2 != 0) {
-							echo '<div style="clear: both"></div>';
-						}
-				}
-			*/
-		?>			
+		<?php endforeach ?>	
 		
 	</div><!-- giftsList -->
 </div>

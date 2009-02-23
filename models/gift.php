@@ -2,7 +2,7 @@
 // app/models/gift.php
 class Gift extends AppModel {
 	var $name = 'Gift';
-	
+	var $actsAs = array('Containable');
 	var $validate = array(
         'priceMin' => array(
             'rule' => 'date',  
