@@ -25,4 +25,4 @@
  */
 ?>
 <?php echo $content_for_layout;?>
-This email was sent by AlfaGifts group.
+This email was sent by AG group.

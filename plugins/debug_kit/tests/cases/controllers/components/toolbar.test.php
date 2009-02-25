@@ -29,8 +29,8 @@
 App::import('Component', 'DebugKit.Toolbar');
 
 class TestToolbarComponent extends ToolbarComponent {
-	function loadPanels($panels) {
-		$this->_loadPanels($panels);
+	function loadPanels($panels, $settings = array()) {
+		$this->_loadPanels($panels, $settings);
 	}
 }
 
@@ -43,8 +43,9 @@ class DebugToolbarTestCase extends CakeTestCase {
 	
 	function setUp() {
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
-		Router::parse('/');
 		$this->Controller =& ClassRegistry::init('Controller');
+		$this->Controller->params = Router::parse('/');
+		$this->Controller->params['url']['url'] = '/';
 		$this->Controller->Component =& ClassRegistry::init('Component');
 		$this->Controller->Toolbar =& ClassRegistry::init('TestToolBarComponent', 'Component');
 	}
@@ -121,12 +122,48 @@ class DebugToolbarTestCase extends CakeTestCase {
 
 		$this->assertEqual(count($this->Controller->Toolbar->panels), 1);
 		$this->assertTrue(isset($this->Controller->helpers['DebugKit.Toolbar']));
-		$this->assertEqual($this->Controller->helpers['DebugKit.Toolbar'], array('output' => 'DebugKit.HtmlToolbar'));
+
+		$this->assertEqual($this->Controller->helpers['DebugKit.Toolbar']['output'], 'DebugKit.HtmlToolbar');
+		$this->assertEqual($this->Controller->helpers['DebugKit.Toolbar']['cacheConfig'], 'debug_kit');
+		$this->assertTrue(isset($this->Controller->helpers['DebugKit.Toolbar']['cacheKey']));
 
 		$timers = DebugKitDebugger::getTimers();
 		$this->assertTrue(isset($timers['controllerAction']));
 	}
+/**
+ * Test that cache config generation works.
+ *
+ * @return void
+ **/
+	function testCacheConfigGeneration() {
+		$this->Controller->components = array('DebugKit.Toolbar');
+		$this->Controller->Component->init($this->Controller);
+		$this->Controller->Component->initialize($this->Controller);
+		$this->Controller->Component->startup($this->Controller);
+		
+		$results = Cache::config('debug_kit');
+		$this->assertTrue(is_array($results));
+	}
+/**
+ * test state saving of toolbar
+ *
+ * @return void
+ **/
+	function testStateSaving() {
+		$this->Controller->components = array('DebugKit.Toolbar');
+		$this->Controller->Component->init($this->Controller);
+		$this->Controller->Component->initialize($this->Controller);
+		$configName = 'debug_kit';
+		$this->Controller->Toolbar->cacheKey = 'toolbar_history';
 
+		$this->Controller->Component->startup($this->Controller);
+		$this->Controller->set('test', 'testing');
+		$this->Controller->Component->beforeRender($this->Controller);
+		
+		$result = Cache::read('toolbar_history', $configName);
+		$this->assertEqual($result[0]['variables']['content']['test'], 'testing');
+		Cache::delete('toolbar_history', $configName);
+	}
 /**
  * Test Before Render callback
  *

@@ -8,10 +8,7 @@ class OrdersController extends AppController {
     var $components = array('Email', 'Search', 'shopping', 'FileHandler');
     var $helpers = array('Time');
     var $email;
-	var $paginate = array('limit' => 10, 'page' => 1); 
-	//var $billingFields = array('firstname', 'lastname', 'phone', 'email', 'address', 'postcode', 'city', 'state');
-
-	//var $shippingFields = array('firstname', 'lastname', 'address', 'postcode', 'city', 'state');
+	var $paginate = array('limit' => 20); 
 
 /**
  * Set up required cart info
@@ -23,50 +20,32 @@ class OrdersController extends AppController {
         $this->Auth->autoRedirect = false;
 
 		$this->subheaderTitle = 'КОРЗИНА';
-
 	}
 	
 	//----------------------------------------------------------------
 	function index() {
+			
+		if( $orders = $this->Session->read('Order') ) {
+			$i=0;
+			foreach( $orders as $order) {
+				$output[$i] = $this->Gift->find('first', array('conditions' => array('Gift.id' => $order['item']) ) ) ;
+				$output[$i]['LineItem']['quantity'] = $order['qty'];
+				$i++;
+			}
+			// resetting field addinfo if it was set by the user
+			$addInfoToSave = $this->Session->read('userCart.addInfo');
+			if ( isset($addInfoToSave ) ) {
+				$this->set('addInfo', $addInfoToSave );
+			}
+			
+			
+			
+			$this->set('orders', $output );
+			//$this->set('count', count($output) );//to show the in basket items
+		} else {
+			$this->render('noitem');
+		}
 		
-				//we will use it late for gifte of the shefl
-				/* 
-    			if ( $this->Session->check('Auth.User.id') != null ) {
-					$this->LineItem->recursive = 2;
-					$currentOrders = $this->LineItem->find('all', array('conditions' => array('Order.user_id' => $this->Session->read('Auth.User.id'), 'Order.status' => 1 ) ) );
-					if( $currentOrders != null ) {
-						$this->set('orders', $currentOrders );
-						$this->set('count', count($currentOrders) );//to show the in basket items
-					} else {
-						$this->render('noitem');
-					}
-    				
-    			} else { 
-    			*/	
-    				if( $orders = $this->Session->read('Order') ) {
-    					$i=0;
-    					foreach( $orders as $order) {
-    						$output[$i] = $this->Gift->find('first', array('conditions' => array('Gift.id' => $order['item']) ) ) ;
-    						$output[$i]['LineItem']['quantity'] = $order['qty'];
-    						$i++;
-    					}
-    					// resetting field addinfo if it was set by the user
-    					$addInfoToSave = $this->Session->read('userCart.addInfo');
-    					if ( isset($addInfoToSave ) ) {
-    						$this->set('addInfo', $addInfoToSave );
-    					}
-    					
-    					
-    					
-						$this->set('orders', $output );
-						$this->set('count', count($output) );//to show the in basket items
-    				} else {
-    					$this->render('noitem');
-    				}
-    				
-    				
-
-    			//}we will use it late for gifte of the shefl
 	}	
 	//---------------------------------------------------------------
 	function add() {
@@ -75,13 +54,11 @@ class OrdersController extends AppController {
 		
 		if ( !empty($this->params['pass'][0]) ) {//param with the gift id
     		$param = Sanitize::paranoid($this->params['pass'][0]);
-    		$this->Gift->recursive = -1;
-    		$paramChecked = $this->Gift->find('first', array('conditions' => array('Gift.id' => $param), 'fields' => array('Gift.id', 'Gift.code') ) );
+    		
+    		$paramChecked = $this->Gift->find('first', array('conditions' => array('Gift.id' => $param), 'fields' => array('Gift.id', 'Gift.code'),'contain'=>false ) );
     		//debug($paramChecked);
-    		if ( $paramChecked['Gift']['id'] ) {
+    		if ( isset($paramChecked['Gift']['id']) && $paramChecked['Gift']['id'] != null ) {
     				$this->shopping->sessionShopping($paramChecked['Gift']['id'], $paramChecked['Gift']['code']);
-    				//$currentOrderId = $this->Order->currentOrder( $this->Session->read('Auth.User.id'),null,  $this->RequestHandler->getClientIP() );
-    				//$this->Session->write('userCart.tempOrderID' ,$currentOrderId);
 					$this->redirect( $this->referer() );  
     		//User want to user param dierctly and wrong param. fuck him/her.
     		} else {
@@ -135,7 +112,7 @@ class OrdersController extends AppController {
 	
 			}
 			$this->Order->recursive = 0;
-			$this->set( 'historyOrderUser', $this->paginate('Order', array('Order.user_id' => $this->Session->read('Auth.User.id') , 'Order.status' => 2) ) );
+			$this->set( 'historyOrderUser', $this->paginate('Order', array('Order.user_id' => $this->Session->read('Auth.User.id') ) ) );
 			
 		
 		
@@ -143,18 +120,11 @@ class OrdersController extends AppController {
 			$this->redirect( $this->Auth->redirect() );
 		}
 	}
-/*
-	function temp_user() {
-		
-	}
-*/
+
     /**
      * handle upload of files and submission info
      */
     function checkout() {
-    	
-		//debug( $this->Session->read() );
-		//debug( $this->params );
 		
 			//making session ID for temp user;
 			if ( $this->Session->check('userCart.tempSession') == false ) {
@@ -162,17 +132,18 @@ class OrdersController extends AppController {
 			}
 			//making temp order ID for unreged user.
 
+			/*
 			if ( $this->Session->check('userCart.tempOrderID') == false  ) {
 			
 				if ( $this->Session->check('Auth.user.id') != false ) {
 					$tempOrderID = $this->Order->currentOrder($this->Session->read('Auth.user.id'), null, $this->RequestHandler->getClientIP() );
 				} else {
-					$tempOrderID = $this->Order->currentOrder(null, $this->Session->read('userCart.tempSession'), $this->RequestHandler->getClientIP() );
-					
+					$tempOrderID = $this->Order->currentOrder(null, $this->Session->read('userCart.tempSession'), $this->RequestHandler->getClientIP() );				
 				}
 				
 				$this->Session->write('userCart.tempOrderID', $tempOrderID);
 			}
+			*/
 				
 	
 			
@@ -182,35 +153,41 @@ class OrdersController extends AppController {
 			//form prossessing
 			if ( !empty($this->data) && $this->Session->check('Order') ) {
 				//basic data cleaning	
-				//$dataToWork = Sanitize::paranoid($this->data['Orders'], array('.',',',':',';',' ','-','\'', '[а-Я]') );
 				$dataToWorkClean = Sanitize::clean( $this->params );
 				//debug($dataToWorkClean);
+				//Updating the ammount of orders pre item. if 0 - deleting the item form the list
 				$this->__orderUpdate($dataToWorkClean['data']['Orders']);
 
 
 				if ( isset($this->params['form']['checkout']) && $this->Session->check('Auth.User.id') ) {// reged user, so final for order
-					
-					//if ( $orderId = $this->Order->find('first', array('conditions' => array('Order.user_id' => $this->Session->read('Auth.User.id'), 'Order.status' => 1 ) ) ) ) {
-						//debug($orderId);
-						//$this->data['Order']['id'] = $orderId['Order']['id'];
-						$this->data['Order']['status'] = 2;
-						$this->data['Order']['comments'] = $this->Session->read('userCart.addInfo');
+				
+						//$this->data['Order']['status'] = 2;
+						$this->data['Order']['user_id'] = $this->Auth->user('id');
+						//$this->data['Order']['addInfo'] = $this->Session->read('userCart.addInfo');
+						$this->Order->create();
 						if ( $this->Order->save($this->data['Order']) ) {
 							$forEmailLineItems = $this->LineItem->saveLineItems( $this->Session->read('Order'),$this->Order->id );
 							$this->Session->del('Order');
         					$this->Session->del('userCart');							
-							
+							//debug($forEmailLineItems);
 							if($forEmailLineItems != array() ) {
 								if ($this->__sendOrderEmail($forEmailLineItems, null, $this->Session->read('Auth.User.id') ) ) {
 									$this->Session->setFlash( 'Заказ был успешно сформирован', 'default', array('class' => null) );
 									$this->redirect('/');
+								} else {
+									$this->Session->setFlash( 'Заказ не был сформирован, приносим извинения', 'default', array('class' => null) );
+									$this->redirect('/',null,true);
 								}
 							} else {
 								$this->Session->setFlash( 'Заказ не был сформирован', 'default', array('class' => null) );
+								$this->redirect('/');
 							}
 
 							$this->Session->del('Order');
         					$this->Session->del('userCart');
+						} else {
+							$this->Session->setFlash( 'Заказ не был сформирован', 'default', array('class' => null) );
+							$this->redirect( $this->referer(),null,true );
 						}
 					//}
 					//$this->render('success');
@@ -220,7 +197,7 @@ class OrdersController extends AppController {
 				
 				//recalculating order number.				
 				if( isset($this->params['form']['recalculate'] ) ) {
-					$this->redirect( array('action' => 'index') );
+					$this->redirect( array('action' => 'index'),null, true );
 				}//end of number recalculating					
 
 				
@@ -393,9 +370,9 @@ class OrdersController extends AppController {
 			$this->set('forEmailLineItems', $forEmailLineItems );
 		}
        
-        //$this->Email->to = array('отдел продаж'.'<info@tehnoavia.ru>', 'дел аж'.'<info@tehnoavia.ru>');
-        $this->Email->to = 'отдел'.'<a_kondrat@tehnoavia.ru>';
-        $this->Email->cc = array('a_kondrat@tehnoavia.ru');
+        $this->Email->to = 'dep'.'<info@tehnoavia.ru>';
+        //$this->Email->to = 'отдел'.'<a_kondrat@tehnoavia.ru>';
+        //$this->Email->cc = 'a_kondrat@tehnoavia.ru';
        // $this->Email->bcc = array('info@tehnoavia.ru'); 
         $this->Email->subject = env('SERVER_NAME') . ' - New Order';
         $this->Email->from = 'noreply@' . env('SERVER_NAME');

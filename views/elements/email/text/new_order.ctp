@@ -1,12 +1,10 @@
 
-Дружок, у тебя новый заказик.
-
-Юзерка звать : <?php 
+n: <?php 
 					
 					if ( $session->check('Auth.User.username') ) {
 						echo $userName;
 					} else {
-						echo 'Анонимчик, слал с IP - '. $userName; 
+						echo 'IP - '. $userName; 
 					}
 				?>
 
@@ -14,8 +12,8 @@
 	if ( isset($forEmailLineItems) ) { 
     	$i=0;
     	foreach ( $forEmailLineItems as $forEmailLineItems ) {
-    		echo 'Вот номер ' .($i+1).' - ';
-    		echo 'Артикул: '.$forEmailLineItems['code']. ' и их типа нада: '. $forEmailLineItems['quantity']."\r\n";
+    		echo 'n ' .($i+1).' - ';
+    		echo 'code: '.$forEmailLineItems['code']. ' adn qty: '. $forEmailLineItems['quantity']."\r\n";
     		$i++;
     	}
     }

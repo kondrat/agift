@@ -18,9 +18,9 @@
  * @filesource
  * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
- * @package       cake
- * @subpackage    cake.cake.libs.
- * @since         CakePHP v 1.2.0.4487
+ * @package       debug_kit
+ * @subpackage    debug_kit.controllers.components
+ * @since         DebugKit 0.1
  * @version       $Revision$
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
@@ -45,14 +45,13 @@ class ToolbarComponent extends Object {
  *
  * @var array
  */
-	var $_defaultPanels = array('session', 'request', 'sqlLog', 'timer', 'log', 'memory', 'variables');
+	var $_defaultPanels = array('history', 'session', 'request', 'sqlLog', 'timer', 'log', 'variables');
 /**
  * Loaded panel objects.
  *
  * @var array
  */
 	var $panels = array();
-
 /**
  * fallback for javascript settings
  *
@@ -67,6 +66,18 @@ class ToolbarComponent extends Object {
  * @var array
  **/
 	var $javascript = array();
+/**
+ * CacheKey used for the cache file.
+ *
+ * @var string
+ **/
+	var $cacheKey = 'toolbar_cache';
+/**
+ * Duration of the debug kit history cache
+ *
+ * @var string
+ **/
+	var $cacheDuration = '+4 hours';
 /**
  * initialize
  *
@@ -83,17 +94,23 @@ class ToolbarComponent extends Object {
 		App::import('Vendor', 'DebugKit.DebugKitDebugger');
 		
 		DebugKitDebugger::startTimer('componentInit', __('Component initialization and startup', true));
-		if (!isset($settings['panels'])) {
-			$settings['panels'] = $this->_defaultPanels;
-		}
 
+		$panels = $this->_defaultPanels;
+		if (isset($settings['panels'])) {
+			$panels = $settings['panels'];
+			unset($settings['panels']);
+		}
+		$this->cacheKey .= $controller->Session->read('Config.userAgent');
+		if (!isset($settings['history']) || (isset($settings['history']) && $settings['history'] !== false)) {
+			$this->_createCacheConfig();
+		}
+    
 		if (isset($settings['javascript'])) {
 			$settings['javascript'] = $this->_setJavascript($settings['javascript']);
 		} else {
 			$settings['javascript'] = $this->_defaultJavascript;
 		}
-		$this->_loadPanels($settings['panels']);
-		unset($settings['panels']);
+		$this->_loadPanels($panels, $settings);
 		
 		$this->_set($settings);
 		$this->controller =& $controller;
@@ -109,19 +126,37 @@ class ToolbarComponent extends Object {
 		$currentViewClass = $controller->view;
 		$this->_makeViewClass($currentViewClass);
 		$controller->view = 'DebugKit.Debug';
-		$isHtml = (!isset($controller->params['url']['ext']) || (isset($controller->params['url']['ext']) && $controller->params['url']['ext'] == 'html'));
+		$isHtml = (
+			!isset($controller->params['url']['ext']) || 
+			(isset($controller->params['url']['ext']) && $controller->params['url']['ext'] == 'html')
+		);
+
 		if (!$this->RequestHandler->isAjax() && $isHtml) {
 			$format = 'Html';
 		} else {
 			$format = 'FirePhp';
 		}
-		$controller->helpers['DebugKit.Toolbar'] = array('output' => sprintf('DebugKit.%sToolbar', $format));
+		$controller->helpers['DebugKit.Toolbar'] = array(
+			'output' => sprintf('DebugKit.%sToolbar', $format),
+			'cacheKey' => $this->cacheKey,
+			'cacheConfig' => 'debug_kit',
+		);
 		$panels = array_keys($this->panels);
 		foreach ($panels as $panelName) {
 			$this->panels[$panelName]->startup($controller);
 		}
 		DebugKitDebugger::stopTimer('componentInit');
 		DebugKitDebugger::startTimer('controllerAction', __('Controller Action', true));
+	}
+/**
+ * beforeRedirect callback
+ *
+ * @return void
+ **/
+	function beforeRedirect(&$controller) {
+		DebugKitDebugger::stopTimer('controllerAction');
+		$vars = $this->_gatherVars($controller);
+		$this->_saveState($controller, $vars);
 	}
 /**
  * beforeRender callback
@@ -132,6 +167,41 @@ class ToolbarComponent extends Object {
  **/
 	function beforeRender(&$controller) {
 		DebugKitDebugger::stopTimer('controllerAction');
+		$vars = $this->_gatherVars($controller);
+		$this->_saveState($controller, $vars);
+
+		$controller->set(array('debugToolbarPanels' => $vars, 'debugToolbarJavascript' => $this->javascript));
+		DebugKitDebugger::startTimer('controllerRender', __('Render Controller Action', true));
+	}
+/**
+ * Load a toolbar state from cache
+ *
+ * @param int $key
+ * @return array
+ **/
+	function loadState($key) {
+		$history = Cache::read($this->cacheKey, 'debug_kit');
+		if (isset($history[$key])) {
+			return $history[$key];
+		}
+		return array();
+	}
+/**
+ * Create the cache config for the history
+ *
+ * @return void
+ * @access protected
+ **/
+	function _createCacheConfig() {
+		Cache::config('debug_kit', array('duration' => $this->cacheDuration, 'engine' => 'File'));
+	}
+/**
+ * collects the panel contents
+ *
+ * @return array Array of all panel beforeRender()
+ * @access protected
+ **/  
+	function _gatherVars(&$controller) {
 		$vars = array();
 		$panels = array_keys($this->panels);
 
@@ -146,25 +216,22 @@ class ToolbarComponent extends Object {
 			$vars[$panelName]['plugin'] = $panel->plugin;
 			$vars[$panelName]['disableTimer'] = true;
 		}
-
-		$controller->set(array('debugToolbarPanels' => $vars, 'debugToolbarJavascript' => $this->javascript));
-		DebugKitDebugger::startTimer('controllerRender', __('Render Controller Action', true));
+		return $vars;
 	}
-
 /**
  * Load Panels used in the debug toolbar
  *
  * @return 	void
  * @access protected
  **/
-	function _loadPanels($panels) {
+	function _loadPanels($panels, $settings) {
 		foreach ($panels as $panel) {
 			$className = $panel . 'Panel';
 			if (!class_exists($className) && !App::import('Vendor',  $className)) {
 				trigger_error(sprintf(__('Could not load DebugToolbar panel %s', true), $panel), E_USER_WARNING);
 				continue;
 			}
-			$panelObj =& new $className();
+			$panelObj =& new $className($settings);
 			if (is_subclass_of($panelObj, 'DebugPanel') || is_subclass_of($panelObj, 'debugpanel')) {
 				$this->panels[$panel] =& $panelObj;
 			}
@@ -223,6 +290,30 @@ class ToolbarComponent extends Object {
 			eval($class);
 		}
 	}
+/**
+ * Save the current state of the toolbar varibles to the cache file.
+ *
+ * @param object $controller Controller instance
+ * @param array $vars Vars to save.
+ * @access protected
+ * @return void
+ **/
+	function _saveState(&$controller, $vars) {
+		$config = Cache::config('debug_kit');
+		if (empty($config) || !isset($this->panels['history'])) {
+			return;
+		}
+		$history = Cache::read($this->cacheKey, 'debug_kit');
+		if (empty($history)) {
+			$history = array();
+		}
+		if (count($history) == $this->panels['history']->history) {
+			array_pop($history);
+		}
+		unset($vars['history']);
+		array_unshift($history, $vars);
+		Cache::write($this->cacheKey, $history, 'debug_kit');
+	}
 }
 
 /**
@@ -259,6 +350,56 @@ class DebugPanel extends Object {
 }
 
 /**
+ * History Panel
+ *
+ * Provides debug information on previous requests.
+ *
+ * @package       cake.debug_kit.panels
+ **/
+class HistoryPanel extends DebugPanel {
+	var $plugin = 'debug_kit';
+/**
+ * Number of history elements to keep
+ *
+ * @var string
+ **/
+	var $history = 5;
+/**
+ * Constructor
+ * 
+ * @param array $settings Array of settings.
+ * @return void
+ **/
+	function __construct($settings) {
+		if (isset($settings['history'])) {
+			$this->history = $settings['history'];
+		}
+	}
+/**
+ * beforeRender callback function
+ *
+ * @return array contents for panel
+ **/
+	function beforeRender(&$controller) {
+		$cacheKey = $controller->Toolbar->cacheKey;
+		$toolbarHistory = Cache::read($cacheKey, 'debug_kit');
+		$historyStates = array();
+		if (is_array($toolbarHistory) && !empty($toolbarHistory)) {
+			foreach ($toolbarHistory as $i => $state) {
+				$historyStates[] = array(
+					'title' => $state['request']['content']['params']['url']['url'],
+					'url' => array('plugin' => 'debug_kit', 'controller' => 'toolbar_access', 'action' => 'history_state', $i + 1)
+				);
+			}
+		}
+		if (count($historyStates) >= $this->history) {
+			array_pop($historyStates);
+		}
+		return $historyStates;
+	}
+}
+
+/**
  * Variables Panel
  *
  * Provides debug information on the View variables.
@@ -267,6 +408,14 @@ class DebugPanel extends Object {
  **/
 class VariablesPanel extends DebugPanel {
 	var $plugin = 'debug_kit';
+/**
+ * beforeRender callback
+ *
+ * @return array
+ **/
+	function beforeRender(&$controller) {
+		return array_merge($controller->viewVars, array('$this->data' => $controller->data));
+	}
 }
 
 /**
@@ -286,7 +435,8 @@ class SessionPanel extends DebugPanel {
  * @return array
  */
 	function beforeRender(&$controller) {
-		return $controller->Session->read();
+		$sessions = $controller->Session->read();
+		return $sessions;
 	}
 }
 
@@ -341,27 +491,6 @@ class TimerPanel extends DebugPanel {
 }
 
 /**
- * Memory Panel
- *
- * Provides debug information on the memory consumption.
- *
- * @package       cake.debug_kit.panels
- **/
-class MemoryPanel extends DebugPanel {
-	var $plugin = 'debug_kit';
-/**
- * startup - add in necessary helpers
- *
- * @return void
- **/
-	function startup(&$controller) {
-		if (!in_array('Number', $controller->helpers)) {
-			$controller->helpers[] = 'Number';
-		}
-	}
-}
-
-/**
  * sqlLog Panel
  *
  * Provides debug information on the SQL logs and provides links to an ajax explain interface.
@@ -370,23 +499,6 @@ class MemoryPanel extends DebugPanel {
  **/
 class sqlLogPanel extends DebugPanel {
 	var $plugin = 'debug_kit';
-
-	var $dbConfigs = array();
-/**
- * get db configs.
- *
- * @param string $controller
- * @access public
- * @return void
- */
-	function startUp(&$controller) {
-		if (!class_exists('ConnectionManager')) {
-			$this->dbConfigs = array();
-			return false;
-		}
-		$this->dbConfigs = ConnectionManager::sourceList();
-		return true;
-	}
 /**
  * Get Sql Logs for each DB config
  *
@@ -399,7 +511,8 @@ class sqlLogPanel extends DebugPanel {
 		if (!class_exists('ConnectionManager')) {
 			return array();
 		}
-		foreach ($this->dbConfigs as $configName) {
+		$dbConfigs = ConnectionManager::sourceList();
+		foreach ($dbConfigs as $configName) {
 			$db =& ConnectionManager::getDataSource($configName);
 			if ($db->isInterfaceSupported('showLog')) {
 				ob_start();

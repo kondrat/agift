@@ -12,6 +12,7 @@ class Order extends AppModel {
 
 
 	var $validate = array(
+							/*
 							'firstname' => array( 'alphaNumeric' => array( 
 																		'rule' => 'alphaNumeric',
 																		'required' => true,
@@ -23,14 +24,14 @@ class Order extends AppModel {
 																	),
 												),
 							'phone' => array(
-												/*
+												
 												'phone' => array( 
 														
 															'rule' => array('phone', '/\((\d{3,5})\)?[-. ]?(\d{3}[-. ]?\d{2}[-. ]?\d{2})/'),
 																						'/(?:8|\+7)? ?\(?(\d{3})\)? ?(\d{3})[ -]?(\d{2})[ -]?(\d{2})/'
 															'message' => 'Неправильный телефон',
 															),
-												*/
+												
 												
 												'between' => array(
 																	'rule' => array( 'between', 6, 20),
@@ -42,6 +43,7 @@ class Order extends AppModel {
 															'message' => 'Этот Email не существует',
 															),
 											),
+							*/
 						);
 
 
@@ -80,7 +82,6 @@ class Order extends AppModel {
     		return $currntOrderId;
 	}
 	
-//--currnet order create----------------------------------------------
 //--------------------------------------------------------------------
 	function betweenRus($data, $min, $max, $key) {
 		//debug($data);
