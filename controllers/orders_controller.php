@@ -76,7 +76,6 @@ class OrdersController extends AppController {
 	function history() {
 		//debug( $this->params );
 		if ( $this->Session->check('Auth.User.id') ) {
-			//$historyOrderUser = $this->Order->find('all', array( 'conditions' => array('Order.user_id' => $this->Session->read('Auth.user.id') ) ) );
 			if( isset($this->params['named']['file']) ) {
 				
 				$temp = $this->params['named']['file'];
@@ -292,13 +291,11 @@ class OrdersController extends AppController {
 		if ( !empty($this->data) && isset($this->params['form']['next_step']) ) {
 			//debug($this->data);
 			$this->data['Order']['addInfo'] = $this->Session->read('userCart.addInfo');
-			$this->data['Order']['id'] = $this->Session->read('userCart.tempOrderID');
 			$this->data['Order']['status'] = 2;
 			
-			if ( $orderId = $this->Order->find('first', array('conditions' => array('Order.session_id' => $this->Session->read('userCart.tempSession'), 'Order.status' => 1 ) ) ) ) {
 				
 				if ( $this->Order->save($this->data['Order']) ) {
-					$forEmailLineItems = $this->LineItem->saveLineItems( $this->Session->read('Order'),$orderId['Order']['id'] );
+					$forEmailLineItems = $this->LineItem->saveLineItems( $this->Session->read('Order'),$this->Order->id );
 					$this->Session->del('Order');
 					$this->Session->del('userCart');							
 					
@@ -321,9 +318,6 @@ class OrdersController extends AppController {
 					$this->render('checkout');
 				}
 			}				
-			//To save line Items , to kill all the session info;
-			//krome temp session Id.
-		}
 	}
 //--------------------------------------------------------------------
 	function view($id = null) {
