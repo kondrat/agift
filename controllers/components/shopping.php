@@ -9,10 +9,11 @@ class shoppingComponent extends Object {
 		$this->controller = $controller;
 	}
 
-	function sessionShopping($giftID = null, $giftCode = null) {
+	function sessionShopping($giftID = null, $giftCode = null, $giftPrice = null) {
 		//writing current order.
 			$currentGift[0]['item'] = $giftID;
 			$currentGift[0]['qty'] = 1;
+			$currentGift[0]['price'] = $giftPrice;
 	
 		// if we haven't the first order we make it.
 		if ( !$this->Session->check('Order') ) {

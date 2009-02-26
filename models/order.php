@@ -4,15 +4,15 @@ class Order extends AppModel {
 
     var $name = 'Order';
 	var $hasMany = array('LineItem' =>
-                   		array('className'    => 'LineItem',
-					   		  'dependent'    =>  true),
-						'fileUploads' =>
-                   		array('className'    => 'fileUploads')
-					   	);
+	                   		array('className' => 'LineItem',
+						   		  'dependent' =>  true),
+						'FileUpload' =>
+	                   		array('className' => 'fileUpload')
+						);
 
-
+	var $actsAs = array('Containable');
 	var $validate = array(
-							/*
+							
 							'firstname' => array( 'alphaNumeric' => array( 
 																		'rule' => 'alphaNumeric',
 																		'required' => true,
@@ -24,7 +24,7 @@ class Order extends AppModel {
 																	),
 												),
 							'phone' => array(
-												
+												/*
 												'phone' => array( 
 														
 															'rule' => array('phone', '/\((\d{3,5})\)?[-. ]?(\d{3}[-. ]?\d{2}[-. ]?\d{2})/'),
@@ -32,7 +32,7 @@ class Order extends AppModel {
 															'message' => 'Неправильный телефон',
 															),
 												
-												
+												*/
 												'between' => array(
 																	'rule' => array( 'between', 6, 20),
 																	'message' => 'Неправильный телефон'
@@ -43,7 +43,7 @@ class Order extends AppModel {
 															'message' => 'Этот Email не существует',
 															),
 											),
-							*/
+							
 						);
 
 

@@ -55,10 +55,10 @@ class OrdersController extends AppController {
 		if ( !empty($this->params['pass'][0]) ) {//param with the gift id
     		$param = Sanitize::paranoid($this->params['pass'][0]);
     		
-    		$paramChecked = $this->Gift->find('first', array('conditions' => array('Gift.id' => $param), 'fields' => array('Gift.id', 'Gift.code'),'contain'=>false ) );
+    		$paramChecked = $this->Gift->find('first', array('conditions' => array('Gift.id' => $param), 'fields' => array('Gift.id', 'Gift.code','Gift.price'),'contain'=>false ) );
     		//debug($paramChecked);
-    		if ( isset($paramChecked['Gift']['id']) && $paramChecked['Gift']['id'] != null ) {
-    				$this->shopping->sessionShopping($paramChecked['Gift']['id'], $paramChecked['Gift']['code']);
+    		if ( isset($paramChecked['Gift']['id']) && $paramChecked['Gift']['id'] != null && $paramChecked['Gift']['price'] != null ) {
+    				$this->shopping->sessionShopping($paramChecked['Gift']['id'], $paramChecked['Gift']['code'], $paramChecked['Gift']['price']);
 					$this->redirect( $this->referer() );  
     		//User want to user param dierctly and wrong param. fuck him/her.
     		} else {
@@ -81,35 +81,45 @@ class OrdersController extends AppController {
 				$temp = $this->params['named']['file'];
 				
 				$logos = $this->FileUpload->find('first', array('conditions' => array('FileUpload.id' => $temp) ) );
-				//debug($logos);
-				//$file = $this->params['named']['file'].'.pdf';
-				
-				/*
-				header("Content-Disposition: attachment; filename=$file");
-				header("Content-Type: application/x-force-download; name=$file");
-				readfile(TMP.'uploads'.DS.'today.pdf');
-				*/
+				//debug($logos);	
+
 				
 					$filename = $logos['FileUpload']['file_name'];
 					$myFile = TMP.'uploads'.DS.$logos['FileUpload']['subdir'].DS.$logos['FileUpload']['file_name'];
 				
 					$mm_type = $logos['FileUpload']['mime_type'];
+					/*
+					$this->view = 'Media';
+					$params = array(
+								'id' => $logos['FileUpload']['file_name'],
+								'name' => 'example',
+								'download' => true,
+								'extension' => 'JPG',
+								'path' => TMP.'uploads'.DS.$logos['FileUpload']['subdir'].DS.$logos['FileUpload']['file_name'],
+								'mimeType' => array('JPG' => 'image/jpeg'),
+							);
+					$this->set($params);
+					*/
+				//* old vresion we are using media-view instead
 				if ( file_exists($myFile)  ) {
 					header("Cache-Control: public, must-revalidate");
 					header("Pragma: hack");
+					header("Expires: 0");
 					header("Content-Type: " . $mm_type.'"');
 					header("Content-Length: " .(string)(filesize($myFile)) );
 					header('Content-Disposition: attachment; filename="'.$filename.'"');
 					header("Content-Transfer-Encoding: binary\n");
 				
 					readfile($myFile);
+					exit;
+					//*/
 				} else {
-					$this->Session->setFlash( 'Нету такого файла', 'default', array('class' => null) );
+					$this->Session->setFlash( 'Данный файл был удален', 'default', array('class' => null) );
 				}
 				
 				
-	
-			}
+		}
+			
 			$this->Order->recursive = 0;
 			$this->set( 'historyOrderUser', $this->paginate('Order', array('Order.user_id' => $this->Session->read('Auth.User.id') ) ) );
 			
@@ -122,52 +132,43 @@ class OrdersController extends AppController {
 
     /**
      * handle upload of files and submission info
+     * status 2 - active order
+     * status 1 - order made, email wasn't sent.
      */
     function checkout() {
-		
 			//making session ID for temp user;
 			if ( $this->Session->check('userCart.tempSession') == false ) {
 				$this->Session->write ('userCart.tempSession', $this->Session->read('Config.time') );
 			}
-			//making temp order ID for unreged user.
-
-			/*
-			if ( $this->Session->check('userCart.tempOrderID') == false  ) {
-			
-				if ( $this->Session->check('Auth.user.id') != false ) {
-					$tempOrderID = $this->Order->currentOrder($this->Session->read('Auth.user.id'), null, $this->RequestHandler->getClientIP() );
-				} else {
-					$tempOrderID = $this->Order->currentOrder(null, $this->Session->read('userCart.tempSession'), $this->RequestHandler->getClientIP() );				
-				}
-				
-				$this->Session->write('userCart.tempOrderID', $tempOrderID);
-			}
-			*/
-				
-	
-			
-
-		
 			
 			//form prossessing
 			if ( !empty($this->data) && $this->Session->check('Order') ) {
 				//basic data cleaning	
 				$dataToWorkClean = Sanitize::clean( $this->params );
-				//debug($dataToWorkClean);
 				//Updating the ammount of orders pre item. if 0 - deleting the item form the list
 				$this->__orderUpdate($dataToWorkClean['data']['Orders']);
 
 
-				if ( isset($this->params['form']['checkout']) && $this->Session->check('Auth.User.id') ) {// reged user, so final for order
+				if ( isset($this->params['form']['checkout']) && $this->Session->check('Auth.User.id') ) {  // reged user, so final for order
 				
-						//$this->data['Order']['status'] = 2;
+						$this->data['Order']['status'] = 2;
 						$this->data['Order']['user_id'] = $this->Auth->user('id');
-						//$this->data['Order']['addInfo'] = $this->Session->read('userCart.addInfo');
+						$this->data['Order']['ip'] = $this->RequestHandler->getClientIP();
+						$this->data['Order']['addInfo'] = $this->Session->read('userCart.addInfo');
 						$this->Order->create();
-						if ( $this->Order->save($this->data['Order']) ) {
+						if ( $this->Order->save($this->data['Order'],false) ) {
+							$uploaded = array();
+							if( $uploaded = $this->Order->FileUpload->find('all',array('conditions'=> array('FileUpload.session_id'=> $this->Session->read('userCart.tempSession')),'fields'=> array('FileUpload.id'),'contain'=>false ) ) ) {
+								foreach($uploaded as $v) {
+									$this->data['FileUpload']['id'] = $v['FileUpload']['id'];
+									$this->data['FileUpload']['order_id'] = $this->Order->id;
+									$this->FileUpload->save($this->data['FileUpload']);
+									$this->FileUpload->id = null;
+								}
+							}
 							$forEmailLineItems = $this->LineItem->saveLineItems( $this->Session->read('Order'),$this->Order->id );
 							$this->Session->del('Order');
-        					$this->Session->del('userCart');							
+        					$this->Session->del('userCart');						
 							//debug($forEmailLineItems);
 							if($forEmailLineItems != array() ) {
 								if ($this->__sendOrderEmail($forEmailLineItems, null, $this->Session->read('Auth.User.id') ) ) {
@@ -175,21 +176,23 @@ class OrdersController extends AppController {
 									$this->redirect('/');
 								} else {
 									$this->Session->setFlash( 'Заказ не был сформирован, приносим извинения', 'default', array('class' => null) );
+									unset($this->data);
+									$this->data['Order']['id'] = $this->Order->id;
+									$this->data['Order']['status'] = 1;
+									$this->Order->save($this->data,false);
 									$this->redirect('/',null,true);
 								}
 							} else {
 								$this->Session->setFlash( 'Заказ не был сформирован', 'default', array('class' => null) );
 								$this->redirect('/');
 							}
-
+ 
+						} else {
 							$this->Session->del('Order');
         					$this->Session->del('userCart');
-						} else {
 							$this->Session->setFlash( 'Заказ не был сформирован', 'default', array('class' => null) );
 							$this->redirect( $this->referer(),null,true );
 						}
-					//}
-					//$this->render('success');
 				}
 				
 				
@@ -202,11 +205,6 @@ class OrdersController extends AppController {
 				
 				//Logo uploading
                 if (  isset($this->params['form']['logo']) ) {
-                	
-                	
-                	
-                	
-        			
                     // allowed mime types for upload
                     $allowedMime = array( 
                                       'image/jpeg',          // images
@@ -236,12 +234,12 @@ class OrdersController extends AppController {
         
         			
                     // extra database field 
-                    if ( $this->Session->check('userCart.tempOrderID') ) {
-                    	$dbFields = array('order_id'  => $this->Session->read('userCart.tempOrderID') );
+                    if ( $this->Session->check('userCart.tempSession') ) {
+                    	$dbFields = array('session_id'  => $this->Session->read('userCart.tempSession') );
                 	} else {
-                		
-                		
                     	$dbFields = array();
+                    	$this->Session->setFlash("Файл не был загружен",'default', array('class' => 'nomargin flash'));
+                    	$this->redirect( array('action' => 'index'),null,true );
                     }
         
                     // set the upload directory
@@ -264,22 +262,24 @@ class OrdersController extends AppController {
                          * upload() will return true so you need to handle 
                          * empty uploads in your own way
                          */
-                        
-                        
-                        //echo 'upload succeeded';
                         //$this->set('uploadData', $this->FileHandler->getLastUploadData());
+                        $uploadData = $this->FileHandler->getLastUploadData();
+                        if ( $this->Session->check('userCart.uploadData') ) {
+							$i = count($this->Session->read('userCart.uploadData'));
+							$this->Session->write('userCart.uploadData.'.$i,  $uploadData['0'] );
+                        } else {
+                        	$this->Session->write('userCart.uploadData.0',  $uploadData['0'] );
+                        }
          				$this->Session->setFlash("Логотип загружен",'default', array('class' => 'nomargin flash'));
-                        $this->redirect( array('action' => 'index') );
+                        $this->redirect( array('action' => 'index'),null,true );
                     } else {
                         //echo 'upload failed';
                         $this->Session->setFlash("Файл не был загружен",'default', array('class' => 'nomargin flash'));
-                        $this->set('errorMessage', $this->FileHandler->errorMessage);
-                        $this->redirect( array('action' => 'index') );
+                        //$this->set('errorMessage', $this->FileHandler->errorMessage);
+                        $this->Session->write('userCart.errorMessage', $this->FileHandler->errorMessage);
+                        $this->redirect( array('action' => 'index'),null,true );
                         
                     }
-        			//$this->Session->setFlash("Логотип не загружен",'default', array('class' => 'nomargin flash'));
-                    //$this->set('errorMessage', $this->FileHandler->errorMessage);
-                    //$this->redirect( array('action' => 'index') );
                 } //upload 
   
 			}
@@ -289,41 +289,62 @@ class OrdersController extends AppController {
     //checkout for unreged user.
 	function step2() {
 		if ( !empty($this->data) && isset($this->params['form']['next_step']) ) {
-			//debug($this->data);
+
 			$this->data['Order']['addInfo'] = $this->Session->read('userCart.addInfo');
 			$this->data['Order']['status'] = 2;
+			$this->data['Order']['ip'] = $this->RequestHandler->getClientIP();
+			$this->data['Order']['session_id'] = $this->Session->read('userCart.tempSession');
 			
-				
-				if ( $this->Order->save($this->data['Order']) ) {
-					$forEmailLineItems = $this->LineItem->saveLineItems( $this->Session->read('Order'),$this->Order->id );
-					$this->Session->del('Order');
-					$this->Session->del('userCart');							
-					
-					if($forEmailLineItems != array() ) {
-						$this->__sendOrderEmail($forEmailLineItems, null, $this->RequestHandler->getClientIP() );
-						$this->Session->del('Order');
-						$this->Session->del('userCart');
-						$this->Session->setFlash( 'Заказ был успешно сформирован', 'default', array('class' => null) );
-						$this->redirect('/');
-						
-						//$this->render('success');
-					} else {
-						$this->Session->setFlash( 'Заказ не был сформирован', 'default', array('class' => null) );
-						$this->redirect( '/' );
+			if ( $this->Order->save($this->data['Order']) ) {	
+					$uploaded = array();
+					if( $uploaded = $this->Order->FileUpload->find('all',array('conditions'=> array('FileUpload.session_id'=> $this->Session->read('userCart.tempSession')),'fields'=> array('FileUpload.id'),'contain'=>false ) ) ) {
+						foreach($uploaded as $v) {
+							$this->data['FileUpload']['id'] = $v['FileUpload']['id'];
+							$this->data['FileUpload']['order_id'] = $this->Order->id;
+							$this->FileUpload->save($this->data['FileUpload']);
+							$this->FileUpload->id = null;
+						}
 					}
-
-
+											
+				$forEmailLineItems = $this->LineItem->saveLineItems( $this->Session->read('Order'),$this->Order->id );
+				$this->Session->del('Order');
+				$this->Session->del('userCart');							
+				
+				if($forEmailLineItems != array() ) {
+					if ($this->__sendOrderEmail($forEmailLineItems, null, $this->RequestHandler->getClientIP() ) ) {
+						$this->Session->setFlash( 'Заказ был успешно сформирован', 'default', array('class' => null) );
+						$this->redirect( '/',null,true ); 
+					} else {	 
+						$this->Session->setFlash( 'Заказ не был сформирован, приносим извинения', 'default', array('class' => null) );
+						unset($this->data);
+						$this->data['Order']['id'] = $this->Order->id;
+						$this->data['Order']['status'] = 1;
+						$this->Order->save($this->data,false);
+						$this->redirect('/',null,true);
+					}
+					
+					//$this->render('success');
 				} else {
-					//echo 'Order wasn\'t saved';
-					$this->render('checkout');
+					$this->Session->setFlash( 'Заказ не был сформирован', 'default', array('class' => null) );
+					$this->redirect( '/',null,true );
 				}
-			}				
+
+
+			} else {
+				$this->Session->del('Order');
+        		$this->Session->del('userCart');
+				$this->Session->setFlash( 'Заказ не был сформирован', 'default', array('class' => null) );
+				$this->redirect( '/',null,true );;
+				$this->render('checkout');
+			}
+		}				
 	}
 //--------------------------------------------------------------------
 	function view($id = null) {
-		$orderToShow = $this->Order->find('first', array('conditions' => array('Order.id' => $id) ) );
-		$this->set('orderToShow', $orderToShow);
-		
+		if ($this->Auth->user('id')) {
+			$orderToShow = $this->Order->find('first', array('conditions' => array('Order.id' => $id ,'Order.user_id'=>$this->Auth->user('id')),'contain'=>'FileUpload' ) );
+			$this->set('orderToShow', $orderToShow);
+		}
 	}
 //--------------------------------------------------------------------
 	function __orderUpdate( $dataToWork = array() ) {
@@ -338,6 +359,7 @@ class OrdersController extends AppController {
 			foreach($dataToWork['lineItemQty'] as $k => $v ) {						
 				$newOrder[$i]['item'] = $k;
 				$newOrder[$i]['qty'] = $v;
+				$newOrder[$i]['price'] = 10;
 				if ( $v == 0 || $k == 0) {
 					unset ($newOrder[$i]) ;
 				}
