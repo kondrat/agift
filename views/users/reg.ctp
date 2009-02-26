@@ -37,7 +37,7 @@
 </tr>
 </table>
 </fieldset>
-<br><br><br>
+<br />
 <fieldset>
 <legend>Контактная информация:</legend>
 	<table cellspacing="0" cellpadding="0" border="0" class="text3" width="385">

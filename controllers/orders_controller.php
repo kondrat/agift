@@ -8,7 +8,7 @@ class OrdersController extends AppController {
     var $components = array('Email', 'Search', 'shopping', 'FileHandler');
     var $helpers = array('Time');
     var $email;
-	var $paginate = array('limit' => 20); 
+	var $paginate = array('limit' => 5); 
 
 /**
  * Set up required cart info
@@ -28,7 +28,7 @@ class OrdersController extends AppController {
 		if( $orders = $this->Session->read('Order') ) {
 			$i=0;
 			foreach( $orders as $order) {
-				$output[$i] = $this->Gift->find('first', array('conditions' => array('Gift.id' => $order['item']) ) ) ;
+				$output[$i] = $this->Gift->find('first', array('conditions' => array('Gift.id' => $order['item']),'contain'=>'Image.img' ) ) ;
 				$output[$i]['LineItem']['quantity'] = $order['qty'];
 				$i++;
 			}
@@ -155,6 +155,7 @@ class OrdersController extends AppController {
 						$this->data['Order']['user_id'] = $this->Auth->user('id');
 						$this->data['Order']['ip'] = $this->RequestHandler->getClientIP();
 						$this->data['Order']['addInfo'] = $this->Session->read('userCart.addInfo');
+						$this->data['Order']['total_price'] = $this->Session->read('userCart.totalPrice');
 						$this->Order->create();
 						if ( $this->Order->save($this->data['Order'],false) ) {
 							$uploaded = array();
@@ -294,6 +295,7 @@ class OrdersController extends AppController {
 			$this->data['Order']['status'] = 2;
 			$this->data['Order']['ip'] = $this->RequestHandler->getClientIP();
 			$this->data['Order']['session_id'] = $this->Session->read('userCart.tempSession');
+			$this->data['Order']['total_price'] = $this->Session->read('userCart.totalPrice');
 			
 			if ( $this->Order->save($this->data['Order']) ) {	
 					$uploaded = array();
@@ -342,7 +344,7 @@ class OrdersController extends AppController {
 //--------------------------------------------------------------------
 	function view($id = null) {
 		if ($this->Auth->user('id')) {
-			$orderToShow = $this->Order->find('first', array('conditions' => array('Order.id' => $id ,'Order.user_id'=>$this->Auth->user('id')),'contain'=>'FileUpload' ) );
+			$orderToShow = $this->Order->find('first', array('conditions' => array('Order.id' => $id ,'Order.user_id'=>$this->Auth->user('id')),'contain'=> array('FileUpload','LineItem') ) );
 			$this->set('orderToShow', $orderToShow);
 		}
 	}
@@ -352,7 +354,20 @@ class OrdersController extends AppController {
 		if ( $dataToWork['addInfo'] != null ) {
 			$this->Session->write('userCart.addInfo', $dataToWork['addInfo'] );
 		}
+		//debug($dataToWork);
 		//order update
+		if ($dataToWork['lineItem']) {
+			foreach($dataToWork['lineItem'] as $k => $v) {
+				if ($v['qty']<1) {				
+					unset($dataToWork['lineItem'][$k]);
+				}
+				$totalPrice[] = $v['qty']*$v['price'];
+			}
+			$this->Session->write('Order', $dataToWork['lineItem']);
+			$this->Session->write('userCart.countTempOrders', count($dataToWork['lineItem']) );
+			$this->Session->write('userCart.totalPrice', array_sum($totalPrice) );
+		}
+		/*
 		if ($dataToWork['lineItemQty']) {
 			//debug($dataToWork['lineItemQty']);
 			$i = 0;
@@ -363,12 +378,12 @@ class OrdersController extends AppController {
 				if ( $v == 0 || $k == 0) {
 					unset ($newOrder[$i]) ;
 				}
-				$i++;
-			
-			}
+				$i++;			
+			}			
 			$this->Session->write('Order', $newOrder);
-			$this->Session->write('userCart.countTempOrders', count($newOrder) );
-		}		
+			$this->Session->write('userCart.countTempOrders', count($newOrder) );			
+		}
+		*/		
 	}	
 //--------------------------------------------------------------------
     /**

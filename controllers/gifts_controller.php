@@ -84,7 +84,7 @@ class GiftsController extends AppController {
 //--------------------------------------------------------------------
 
     function search() {
-    	debug($this->params);
+    	//debug($this->params);
     	$this->subheaderTitle = 'РЕЗУЛЬТАТЫ ПОИСКА';
     	// function vars ini.
     	

@@ -59,7 +59,9 @@
 	    		<tr>
 	    			<td height="40" width="170"><b>Тираж:</b></td>
 	    			<td>
-	    				<?php echo $form->input('lineItemQty]'."[{$order['Gift']['id']}]", array('size' => 10, 'label' => false,  'value' => $order['LineItem']['quantity'] ) ); ?>	    				
+	    				<?php echo $form->input('lineItem]'."[$i]".'[qty', array('size' => 10, 'label' => false,  'value' => $order['LineItem']['quantity'] ) ); ?>	
+	    				<?php echo $form->hidden('lineItem]'."[$i]".'[price', array('value'=> $order['Gift']['price'])) ; ?>  
+	    				<?php echo $form->hidden('lineItem]'."[$i]".'[item', array('value'=> $order['Gift']['id'])) ; ?>				
 	    			</td>
 	    		</tr>
 	    		<tr>
@@ -112,7 +114,6 @@
 			<br/>
 			<br/>
 	<?php echo $form->submit('Загрузить логотип', array('name' => 'logo') );?>
-	<?php //echo $form->hidden('qwer', array('value'=> $session->id() ) );?>
 	
 	
 <br><br>
@@ -120,7 +121,6 @@
 	<b>
 		Цена без нанесения: 
 		<?php echo array_sum($total_price); ?>
-		<?php echo $form->hidden('totalPrice', array('value'=> array_sum($total_price) ) );?>
 		руб.
 	</b>
 	<br><br>

@@ -8,7 +8,6 @@ class LineItem extends AppModel {
 	var $actsAs = array('Containable');
 //--------------------------------------------------------------------
 	function saveLineItems( $items = array(), $orderId = null ) {
-		debug($items);
 		$i = 0;
 		foreach( $items as $item ) {
 			
