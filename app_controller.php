@@ -1,6 +1,6 @@
 <?php
 class AppController extends Controller {
-	var $components      = array('Acl', 'Auth', 'RequestHandler', 'Email', 'Cookie','DebugKit.Toolbar');
+	var $components      = array( 'Auth', 'RequestHandler', 'Email', 'Cookie','DebugKit.Toolbar');
     var $helpers         = array('Javascript', 'Html', 'Form', 'Menu', 'Tree', 'Cache');
     var $publicControllers = array('pages', 'test');
    // var $uses = array('Order');
@@ -27,14 +27,21 @@ class AppController extends Controller {
             if($this->viewPath == 'pages') {
                 $this->Auth->allow('*');
             } else {
-                $this->Auth->authorize = 'actions';
+                $this->Auth->authorize = 'controller';
 	            if ( in_array( low($this->params['controller']), $this->publicControllers) ) {
                 	$this->Auth->allow('*');	
                 }
             }
         } 
 		
-		//$this->Auth->actionPath = 'controllers/';
+		function isAuthorized() {
+		    if ($this->Auth->user('group_id') == '1') {
+		        return true;
+		    } else {
+		        return false;
+		    }
+			return true;
+		}
 
 	}
 //--------------------------------------------------------------------

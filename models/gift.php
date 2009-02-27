@@ -56,7 +56,8 @@ class Gift extends AppModel {
 								'conditions' => '',
 								'fields' => '',
 								'order' => '',
-								'counterCache' => '')
+								'counterCache' => ''),
+							'LineItem',
                         );
 
 }

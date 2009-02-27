@@ -6,7 +6,7 @@ class OrdersController extends AppController {
     var $name = 'Orders';
     var $uses = array('Order', 'LineItem', 'Gift', 'Image','FileUpload');
     var $components = array('Email', 'Search', 'shopping', 'FileHandler');
-    var $helpers = array('Time');
+    var $helpers = array('Time','Number');
     var $email;
 	var $paginate = array('limit' => 5); 
 
@@ -15,7 +15,7 @@ class OrdersController extends AppController {
  */
 
 	function beforeFilter () {
-        $this->Auth->allow('index','view','add', 'logo', 'checkout', 'step2', 'history');
+        $this->Auth->allow('index','add', 'checkout', 'step2');
         parent::beforeFilter(); 
         $this->Auth->autoRedirect = false;
 
@@ -74,7 +74,7 @@ class OrdersController extends AppController {
 	//----------------------------------------------------------------
 
 	function history() {
-		//debug( $this->params );
+		$this->subheaderTitle = 'ИСТОРИЯ ЗАКАЗОВ';
 		if ( $this->Session->check('Auth.User.id') ) {
 			if( isset($this->params['named']['file']) ) {
 				
@@ -343,8 +343,9 @@ class OrdersController extends AppController {
 	}
 //--------------------------------------------------------------------
 	function view($id = null) {
+		$this->subheaderTitle = 'ИСТОРИЯ ЗАКАЗОВ';
 		if ($this->Auth->user('id')) {
-			$orderToShow = $this->Order->find('first', array('conditions' => array('Order.id' => $id ,'Order.user_id'=>$this->Auth->user('id')),'contain'=> array('FileUpload','LineItem') ) );
+			$orderToShow = $this->Order->find('first', array('conditions' => array('Order.id' => $id ,'Order.user_id'=>$this->Auth->user('id')),'contain'=> array('FileUpload','LineItem'=> array('Gift'=> array('Image') ) ) ) );
 			$this->set('orderToShow', $orderToShow);
 		}
 	}
@@ -412,20 +413,37 @@ class OrdersController extends AppController {
         $this->Email->attachments = $attachment;
         //$this->Email->delivery = 'debug';  
         return $this->Email->send();
-	}     
+	}   
+//-------------------------------------------------------------------- 
+  function isAuthorized() {
+        if ($this->action == 'delete' || $this->action == 'history') {
+            if ($this->Auth->user('id')) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+ 
+//--------------------------------------------------------------------
+	function delete ($id) {
+		App::import('Sanitize');		
+		if ( isset($this->params['pass']['0']) && (int)Sanitize::paranoid($this->params['pass']['0']) != null ) {
+			$id = $this->params['pass']['0'];
+			if($this->Order->del($id) ) {
+				$this->Session->setFlash( 'Заказ  был удален', 'default', array('class' => null) );
+				$this->redirect($this->referer(),null,true );
+			}
+		}
+	}
 //--------------------------------------------------------------------   
 /**
  * Lists all orders in the administrator page.
- *
- * Uses the PaginationComponent class to do the pagination.
  */
  /*
     function admin_index() {
-		$data = $this->paginate('Order', array('session' => ''));
-		foreach($data as $key => $row) {		
-			$data[$key] = $this->Order->countTotal($row);
-		}
-		$this->set(compact('data')); 
     }
 */
 /**
@@ -433,10 +451,6 @@ class OrdersController extends AppController {
  */
 /*
     function admin_search($keywords = '') {
-		$keywords = $this->params['url']['keywords'];
-		$searchFields = array('Order.email', 'Order.firstname', 'Order.lastname', 'Order.number');
-		$data = $this->Search->query($this->Order, $keywords, $searchFields, ANY, ANYWHERE, '*', 500);
-		$this->set(compact('data'));
     }
 */
 /**
@@ -445,173 +459,17 @@ class OrdersController extends AppController {
  */
 /* 
     function admin_edit($id) {
-		$this->data = $data = $this->Order->finalized($id);
-		$this->set(compact('data'));
     }
 */
 /**
  * View order.
- *
- *
- * @param $id int Order ID. This is the ID of the order to edit.
  */
 
 /*
     function admin_view($id) {
-		$this->data = $data = $this->Order->finalized($id);
-		$this->set(compact('data'));
     }
 */
 
-/**
- * Get cart contents with totals
- */
-/*
-	function cart_contents () {
-		$dataTemp = $this->Order->fullBySession($this->Session->read('Config.rand'));
-		if($dataTemp) {
-			$data = $this->totals($dataTemp);
-			return $data;
-		}
-	}
-*/
-/**
- * Show shopping cart page
- */
-/*
-	function show () {
-		$data = $this->cart_contents();
-		$this->set(compact('data'));
-	}
-*/
-/**
- * add totals to shopping cart contents
- */
-/*
-	function totals($data) {
-		$checkout = $this->Session->read('Order');
-		$dataTemp['Order'] = array(
-			'shipping_price' => $this->ShippingMethod->getQuote($checkout['shipping_method_id'], $data),
-			'payment_price' => $this->PaymentMethod->getQuote($checkout['payment_method_id']),
-		);
-		$data['Order']['shipping_handling'] = $dataTemp['Order']['shipping_price'] + $dataTemp['Order']['payment_price'];
-		$data['Order']['total'] = $data['Order']['shipping_handling'] + $data['Order']['subtotal'];
-		$data = array_merge($dataTemp, $data);
-		return $data;
-    }
-*/
-/**
- * show checkout page
- */
-/*
-	function checkout($id = false) {
-		$httpsUrl = Configure::read('Site.https_url');
-		if(!empty($httpsUrl)) {
-			$this->redirect($httpsUrl . '/orders/checkout/');
-		}
-		if (!empty($this->data)) {
-			$this->Session->del('Order');
-			$this->Session->write('Order', $this->data['Order']);
-			$action = 'process';
-			if(isset($_POST['verify'])) {
-				$action = 'checkout';
-				$this->redirect(array('action' => $action));
-			} else {
-				if($this->data['Order']['same'] == '1') {
-					$this->__billingToShipping();
-				}
-				$this->__refreshOrder();
-				$this->process();
-			}
-			
-		} else {
-			$this->_indexVariables();
-		}
-    }
-*/
-/**
- * Set view variables for checkout page
- */
-/* 
-	function _indexVariables() {
-		$this->data['Order'] = $this->Session->read('Order');
-		$data = $this->cart_contents();
-		if($data) {
-			$countries = $this->Country->find('list', array('conditions' => array('active' => '1')));
-			$country = $this->Country->getCountryData($this->data['Order']['country_id']);
-			$country['ShippingMethod'] = $this->ShippingMethod->getAllQuotes($country['ShippingMethod'], $data);
-			$paymentMethods = $this->PaymentMethod->bsFindAllactive();
-			$shippingFields = $this->shippingFields;
-			$billingFields = $this->billingFields;
-			$this->set(compact('data', 'countries', 'paymentMethods', 'country', 'shippingFields', 'billingFields'));
-		} else {
-			$this->redirect(array('action' => 'show'));
-		}
-	}
-*/
-/**
- * Check where to redirect after submitting the checkout form
- */
-/*
-	function process() {
-		$processor = $this->PaymentMethod->getProcessor($this->Session->read('Order.payment_method_id'));
-		$this->redirect(array('plugin' => 'payment', 'controller' => $processor, 'action' => 'index'));
-	}
-*/
-/**
- * Finalize order
- */
-/*
-	function success() {
-		$data = $this->cart_contents();
-		if(!empty($data)) {
-			$data['Order'] = array_merge($data['Order'], $this->Session->read('Order'));
-			$data['Order']['session'] = '';
-			$data['Order'] = $this->convert($data['Order']);
-			$this->Order->save($data);
-			$this->LineItem->convert($data['LineItem']);
-			$this->__emailOrder($data['Order']['id']);
-			$this->set(compact($data));
-		}
-	}
-*/
-/**
- * Finalize order
- */
-/*
-	function convert($data) {
-		if(isset($data['shipping_method_id'])) {
-			$this->ShippingMethod->recursive = -1;
-			$shipping = $this->ShippingMethod->findById($data['shipping_method_id']);
-		}
-		if(isset($data['payment_method_id'])) {
-			$this->ShippingMethod->recursive = -1;
-			$payment = $this->PaymentMethod->findById($data['payment_method_id']);
-		}
-		$country = $this->Country->findById($data['country_id']);
-		$number = $this->Order->find('first', array('order' => 'number DESC'), -1);		
-		$order = array(
-				'number' => (int)$number['Order']['number'] + 1,
-    			'shipping_method' => $shipping['ShippingMethod']['name'],
-    			'payment_method' => $payment['PaymentMethod']['name'],
-    			'payment_price' => $payment['PaymentMethod']['price'],
-    			'shipping_price' => $data['shipping_handling'] - $payment['PaymentMethod']['price'],				
-				'country' => $country['Country']['name'],
-				'created' => date('Y-m-d H:i:s'),
-		);
-		return array_merge($data, $order);
-	}
-
-*/
-
-/*
-	function __billingToShipping() {
-		$billingFields = array_merge($this->billingFields, array('country_id'));
-		foreach($billingFields as $row) {
-			$this->Session->write('Order.s_' . $row, $this->Session->read('Order.' . $row));
-		}
-	}
-*/
 }
 
 ?>

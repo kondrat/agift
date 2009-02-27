@@ -34,9 +34,9 @@
 
 		<?php echo $form->input('password', array( 'size' => 20,'class' => '',  'label' => 'Password') );?>
 
-		<?php echo $html->link("Забыли пароль?", array( 'action' => 'password_reset'), array('class' => 'dm' ) ); ?>
+		<?php echo $html->link("Забыли пароль?", array( 'controller'=>'users','action' => 'password_reset'), array('class' => 'dm' ) ); ?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<?php echo $html->link( 'Регистрация', array( 'action' => 'reg' ), array('class' => 'dm' ) ); ?>
+		<?php echo $html->link( 'Регистрация', array( 'controller'=>'users','action' => 'reg' ), array('class' => 'dm' ) ); ?>
 
 
 

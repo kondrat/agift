@@ -13,8 +13,9 @@
 				<?php echo $paginator->next('Вперед', array( 'class' => 'menu2' ), null, array('class'=>'menu2'));?>
 			<?php endif ?>
 	</div>
-	
-	<div class="giftsList">
+	<br />
+	<br />
+	<div class="giftsList" style="margin-left: 250px;">
 	
 		<?php $i = 0; ?>
 		<?php foreach ($gifts as $gift): ?>
@@ -58,7 +59,6 @@
 				<br>
 				<b>Цена: <?php echo $gift['Gift']['price'];?> руб.</b> 
 				&nbsp;&nbsp;&nbsp;
-				<a href=""><img src="b_icon.gif" border="0"></a>
 				<?php echo  $html->link( $html->image('proekt/b_icon.gif', array('border' => 0) ),  array( 'controller' => 'orders', 'action' => 'add',$gift['Gift']['id']), array(), false, false ); ?>
 				<br />
 			</div>

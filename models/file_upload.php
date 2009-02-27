@@ -2,6 +2,7 @@
 class FileUpload extends AppModel {
     var $name = 'FileUpload';
     var $actsAs = array('Containable');
-
-}//FileUpload
+    var $belongsTo = array('Order'=> array('className'=> 'Order'),
+    					);
+}
 ?>

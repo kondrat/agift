@@ -109,9 +109,9 @@ class User extends AppModel {
 								'counterCache' => ''
 							),
 						);
-//--------------------------------------------------------------------
-    var $actsAs = array('Acl' => 'requester');
-//--------------------------------------------------------------------    
+
+//--------------------------------------------------------------------  
+	/*  
     function parentNode() {
         if (!$this->id && empty($this->data)) {
             return null;
@@ -126,6 +126,7 @@ class User extends AppModel {
             return array('Group' => array('id' => $data['User']['group_id']));
         }
     }
+    */
 
 //--------------------------------------------------------------------
 	function betweenRus($data, $min, $max, $key) {

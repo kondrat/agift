@@ -4,6 +4,7 @@ tmp/cache/models/*
 tmp/cache/persistent/*
 tmp/cache/views/*
 tmp/tests/*
+tmp/uploads/*
 tmp/sessions/*
 tmp/logs/*
 plugins/*

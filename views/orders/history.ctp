@@ -16,11 +16,22 @@
 	<?php foreach ($historyOrderUser as $singlOrder ) : ?>
 		<tr>
 			<td>Дата оформления: <?php echo date( 'd.m.y', strtotime( $singlOrder['Order']['created'] ) );?></td>
-			<td>Сумма заказа: <?php $singlOrder['Order']['total_price'];?> руб.</td>
+			<td>Сумма заказа: <?php echo $number->format($singlOrder['Order']['total_price'], array(
+							    'places' => 2,
+							    'before' => false,
+							    'escape' => false,
+							    'decimals' => '.',
+							    'thousands' => false,
+							));
+							?> руб.</td>
 			<td><?php echo $html->link('Просмотр заказа', array('action' => 'view',$singlOrder['Order']['id']) ); ?></td>
-			<td><?php echo $html->link('Удалить заказ', array('action' => 'delete',$singlOrder['Order']['id']) ); ?></td>
+			<td><?php echo $html->link('Удалить заказ', array('action' => 'delete',$singlOrder['Order']['id']), null, sprintf('Подтверждаете удаление %s?', $singlOrder['Order']['id']) ); ?></td>
 		</tr>
 	<?php endforeach ?>
-
+	<?php if (count($historyOrderUser) == 0):?>
+		<tr>
+			<td>Заказы отсутствуют</td>
+		</tr>
+	<?php endif ?>
 
 </table>
