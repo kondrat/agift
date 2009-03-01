@@ -515,3 +515,36 @@ div.menu2 {
        font-weight: normal;
        margin-right: 40px;
 }
+/*--error class--*/
+.error-message {
+	color: red;
+	font-weight: bold;
+}
+/*--- more classes ----*/
+.altrow {
+	background-color: #eee;
+}
+.x {
+	margin: 5px 10px;
+}
+div.input label {
+	float: left;
+}
+.actions {
+	margin: 0;
+	font-size: 12px;
+}
+.actions a {
+	text-decoration:none;
+	color: #000;
+}
+.actions a:hover {
+	text-decoration: underline;
+}
+p.file {
+	margin:0 0 3px 0;
+}
+p.delFile {
+	margin:0 0 10px 0;
+	font-size: 13px;
+}

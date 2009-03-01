@@ -33,16 +33,16 @@ class AppController extends Controller {
                 }
             }
         } 
-		
-		function isAuthorized() {
-		    if ($this->Auth->user('group_id') == '1') {
-		        return true;
-		    } else {
-		        return false;
-		    }
-			return true;
-		}
-
+	}
+	//----------------------------------------------	
+	function isAuthorized() {
+	    if ($this->Auth->user('group_id') == '1') {
+	    	//echo 'admin';
+	        return true;
+	    } else {
+	        return false;
+	    }
+		return true;
 	}
 //--------------------------------------------------------------------
 
@@ -50,17 +50,7 @@ class AppController extends Controller {
 		//title for subheader. default Alfa gifts
 		$this->set('subheaderTitle', $this->subheaderTitle);
 		
-		//set count orders for reged User
-		/*
-		if ($currentUser =$this->Session->read('Auth.User.id') ) {
-			$this->Order->recursive = -1;
-			$currentOrder = $this->Order->find('first', array( 'conditions' => array('Order.user_id' => $currentUser, 'Order.status' => 1) ) );
 
-			if( isset($currentOrder['Order']['line_item_count']) && $currentOrder['Order']['line_item_count'] > 0 ) {
-				$this->set('currentOrderTotal', $currentOrder['Order']['line_item_count'] );
-			}
-		}
-		*/
 		if (Configure::read('debug') == 0){
 			@ob_start ('ob_gzhandler');
 			header('Content-type: text/html; charset: UTF-8');

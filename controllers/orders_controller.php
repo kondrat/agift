@@ -1,6 +1,4 @@
 <?php
-App::import('Sanitize');
-
 class OrdersController extends AppController {
 
     var $name = 'Orders';
@@ -15,7 +13,7 @@ class OrdersController extends AppController {
  */
 
 	function beforeFilter () {
-        $this->Auth->allow('index','add', 'checkout', 'step2');
+        $this->Auth->allow('index','add','clean', 'checkout', 'step2');
         parent::beforeFilter(); 
         $this->Auth->autoRedirect = false;
 
@@ -48,8 +46,27 @@ class OrdersController extends AppController {
 		
 	}	
 	//---------------------------------------------------------------
+	function clean($id) {
+		if( !is_numeric($id) || !$id ){
+			$this->Session->setFlash('Invalid Order');
+			$this->redirect(array('controller'=>'pages','action'=>'index'), null, true);
+		}
+
+			if ( $orders = $this->Session->read('Order') ) {
+				foreach( $orders as $k => $order ) {
+					if( $order['item'] == $id ) {
+						unset($orders[$k]);
+						$this->Session->del('Order.'.$k);
+					}
+				}
+				$this->Session->write('userCart.countTempOrders',count($orders) );
+				$this->redirect(array('controller'=>'orders','action'=>'index'),null,true);
+			}
+			$this->redirect(array('controller'=>'pages','action'=>'index'),null,true);
+	}
+	//---------------------------------------------------------------
 	function add() {
-		
+		App::import('Sanitize');
 		$order = array();
 		
 		if ( !empty($this->params['pass'][0]) ) {//param with the gift id
@@ -119,9 +136,14 @@ class OrdersController extends AppController {
 				
 				
 		}
-			
-			$this->Order->recursive = 0;
-			$this->set( 'historyOrderUser', $this->paginate('Order', array('Order.user_id' => $this->Session->read('Auth.User.id') ) ) );
+			$this->paginate['order']['created'] = 'desc';
+			if( $this->Auth->user('group_id') > 1 ) {
+				$this->Order->recursive = 0;
+				$this->set( 'historyOrderUser', $this->paginate('Order', array('Order.user_id' => $this->Session->read('Auth.User.id') ) ) );
+			} elseif( $this->Auth->user('group_id') == 1 ) {
+				$this->Order->recursive = 0;
+				$this->set( 'historyOrderUser', $this->paginate() );				
+			}
 			
 		
 		
@@ -129,13 +151,14 @@ class OrdersController extends AppController {
 			$this->redirect( $this->Auth->redirect() );
 		}
 	}
-
+	//----------------------------------------------------------------
     /**
      * handle upload of files and submission info
      * status 2 - active order
      * status 1 - order made, email wasn't sent.
      */
     function checkout() {
+    	App::import('Sanitize');
 			//making session ID for temp user;
 			if ( $this->Session->check('userCart.tempSession') == false ) {
 				$this->Session->write ('userCart.tempSession', $this->Session->read('Config.time') );
@@ -268,8 +291,10 @@ class OrdersController extends AppController {
                         if ( $this->Session->check('userCart.uploadData') ) {
 							$i = count($this->Session->read('userCart.uploadData'));
 							$this->Session->write('userCart.uploadData.'.$i,  $uploadData['0'] );
+							$this->Session->write('userCart.uploadData.'.$i.'.file_id',  $this->FileUpload->id );
                         } else {
                         	$this->Session->write('userCart.uploadData.0',  $uploadData['0'] );
+                        	$this->Session->write('userCart.uploadData.0.file_id',  $this->FileUpload->id );
                         }
          				$this->Session->setFlash("Логотип загружен",'default', array('class' => 'nomargin flash'));
                         $this->redirect( array('action' => 'index'),null,true );
@@ -343,10 +368,25 @@ class OrdersController extends AppController {
 	}
 //--------------------------------------------------------------------
 	function view($id = null) {
+		if( !is_numeric($id) || !$id ){
+			$this->Session->setFlash('Invalid Order');
+			$this->redirect(array('controller'=>'pages','action'=>'index'), null, true);
+		}
+		
 		$this->subheaderTitle = 'ИСТОРИЯ ЗАКАЗОВ';
+		$orderToShow  = array();
 		if ($this->Auth->user('id')) {
-			$orderToShow = $this->Order->find('first', array('conditions' => array('Order.id' => $id ,'Order.user_id'=>$this->Auth->user('id')),'contain'=> array('FileUpload','LineItem'=> array('Gift'=> array('Image') ) ) ) );
-			$this->set('orderToShow', $orderToShow);
+			if($this->Auth->user('group_id') > 1 ) {
+				$orderToShow = $this->Order->find('first', array('conditions' => array('Order.id' => $id ,'Order.user_id'=>$this->Auth->user('id')),'contain'=> array('FileUpload','LineItem'=> array('Gift'=> array('Image') ) ) ) );			
+			} elseif($this->Auth->user('group_id') == 1) {
+				$orderToShow = $this->Order->find('first', array('conditions' => array('Order.id' => $id ),'contain'=> array('FileUpload','LineItem'=> array('Gift'=> array('Image') ) ) ) );			
+			}
+			if( $orderToShow != array() ) {
+				$this->set('orderToShow', $orderToShow);
+			} else {
+				$this->Session->setFlash('Invalid Order');
+				$this->redirect(array('controller'=>'orders','action'=>'history'), null, true);
+			}
 		}
 	}
 //--------------------------------------------------------------------
@@ -367,24 +407,7 @@ class OrdersController extends AppController {
 			$this->Session->write('Order', $dataToWork['lineItem']);
 			$this->Session->write('userCart.countTempOrders', count($dataToWork['lineItem']) );
 			$this->Session->write('userCart.totalPrice', array_sum($totalPrice) );
-		}
-		/*
-		if ($dataToWork['lineItemQty']) {
-			//debug($dataToWork['lineItemQty']);
-			$i = 0;
-			foreach($dataToWork['lineItemQty'] as $k => $v ) {						
-				$newOrder[$i]['item'] = $k;
-				$newOrder[$i]['qty'] = $v;
-				$newOrder[$i]['price'] = 10;
-				if ( $v == 0 || $k == 0) {
-					unset ($newOrder[$i]) ;
-				}
-				$i++;			
-			}			
-			$this->Session->write('Order', $newOrder);
-			$this->Session->write('userCart.countTempOrders', count($newOrder) );			
-		}
-		*/		
+		}	
 	}	
 //--------------------------------------------------------------------
     /**
@@ -415,7 +438,7 @@ class OrdersController extends AppController {
         return $this->Email->send();
 	}   
 //-------------------------------------------------------------------- 
-  function isAuthorized() {
+  	function isAuthorized() {
         if ($this->action == 'delete' || $this->action == 'history') {
             if ($this->Auth->user('id')) {
                 return true;
@@ -429,14 +452,26 @@ class OrdersController extends AppController {
  
 //--------------------------------------------------------------------
 	function delete ($id) {
-		App::import('Sanitize');		
-		if ( isset($this->params['pass']['0']) && (int)Sanitize::paranoid($this->params['pass']['0']) != null ) {
-			$id = $this->params['pass']['0'];
+		if( !is_numeric($id) || !$id ){
+			$this->Session->setFlash('Invalid Order');
+			$this->redirect(array('controller'=>'pages','action'=>'index'), null, true);
+		}	
+
+			if ($this->Auth->user('group_id') > 1 ) {
+				if ( !$this->Order->find('count',array('conditions'=> array('Order.id'=> $id, 'Order.user_id'=> $this->Auth->user('id') ) , 'contain'=>false) ) ) {
+					$this->redirect('/',null,true);
+				}
+			}
+			
+					
 			if($this->Order->del($id) ) {
 				$this->Session->setFlash( 'Заказ  был удален', 'default', array('class' => null) );
 				$this->redirect($this->referer(),null,true );
+			} else {
+				$this->Session->setFlash( 'Заказ не был удален', 'default', array('class' => null) );
+				$this->redirect($this->referer(),null,true );				
 			}
-		}
+	
 	}
 //--------------------------------------------------------------------   
 /**

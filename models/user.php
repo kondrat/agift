@@ -20,7 +20,7 @@ class User extends AppModel {
 																						
 							'password1' => array( 'betweenRus' => array(
 																	'rule' => array( 'betweenRus', 6, 15,'password1'),
-																	'message' => 'От 6 до 15 букв'
+																	'message' => 'От 6 до 15 знаков'
 																	)
 												),
 							'password2' => array( 'passidentity' => array(
@@ -68,23 +68,16 @@ class User extends AppModel {
 												),
 							'company' => array( 'alphaNumeric' => array( 
 																		'rule' => array('custom', '/^[\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd} ]+$/mu'),
-																		'message' => 'Только буквы и цифры'
+																		'message' => 'Только буквы и цифры',
+																		'allowEmpty' => true,
 																		),
 												'betweenRus' => array(
 																	'rule' => array( 'betweenRus', 2, 15, 'company'),
-																	'message' => 'От 2 до 15 букв'
+																	'message' => 'От 2 до 15 букв',
+																	'allowEmpty' => true,
 																	)
 												),
-							'fax' => array(
-												/*
-												'phone' => array( 
-														
-															'rule' => array('phone', '/\((\d{3,5})\)?[-. ]?(\d{3}[-. ]?\d{2}[-. ]?\d{2})/'),
-																						'/(?:8|\+7)? ?\(?(\d{3})\)? ?(\d{3})[ -]?(\d{2})[ -]?(\d{2})/'
-															'message' => 'Неправильный телефон',
-															),
-												*/
-												
+							'fax' => array(												
 												'between' => array(
 																	'rule' => array( 'between', 6, 20),
 																	'allowEmpty' => true,

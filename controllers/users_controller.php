@@ -1,7 +1,4 @@
 <?php
-uses('sanitize');
-$mrClean = new Sanitize();
-
 class UsersController extends AppController {
 	var $uses = array('User','Order', 'LineItem', 'Gift');
 	var $name = 'Users';
@@ -12,14 +9,38 @@ class UsersController extends AppController {
 
 //--------------------------------------------------------------------	
   function beforeFilter() {
-        $this->Auth->allow( 'logout', 'reg', 'password_reset','view');
+        $this->Auth->allow( 'logout', 'reg', 'password_reset');
         parent::beforeFilter(); 
         $this->Auth->autoRedirect = false;
         //debug($this->Session->read() );
     }
+    
+  	function isAuthorized() {
+  		if( $this->Auth->user('group_id') && $this->Auth->user('group_id') == 1 ) {
+  			return true;
+  		}
+        if ($this->action == 'view' || $this->action == 'edit' || $this->action == 'newpassword') {
+            if( $this->Auth->user('group_id') && $this->Auth->user('group_id') > 1 ) {
+                if( $this->params['pass']['0'] === $this->Auth->user('id') ) {
+                	return true;
+                } else {
+                	return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        return false;
+    }
 //--------------------------------------------------------------------
 	function index() {
 		$this->User->recursive = 0;
+		if ( isset($this->params['named']['u']) && $this->params['named']['u'] == 'customer') {
+			$this->paginate['conditions'] = array('Group.id >'=>'1');
+		} elseif ( isset($this->params['named']['u']) && $this->params['named']['u'] == 'admin' ) {
+			$this->paginate['conditions'] = array('Group.id'=>'1');
+		}
 		$this->set('users', $this->paginate() );
 	}
 //--------------------------------------------------------------------
@@ -92,22 +113,24 @@ class UsersController extends AppController {
 		
 
 		if ( !empty($this->data) ) {
-			
+			App::import('Sanitize');
+			$this->data = Sanitize::clean($this->data);
 			$this->data['User']['group_id'] = 4;			
 			$this->User->create();
 
-			if ( $this->User->save( $this->data) ) {
-				$a = $this->User->read();
-				//debug($a);
-				$this->Auth->login($a);
-				$this->redirect( array('controller' => 'orders', 'action' => 'index') );
-               	//$this->redirect('/users/thanks');
-         	} else {
-         		// Failed, clear password field
-				$this->data['User']['password1'] = null;
-				$this->data['User']['password2'] = null;
-				$this->Session->setFlash('Новый аккаунт не был создан');
-			}
+				if ( $this->User->save( $this->data) ) {
+					$a = $this->User->read();
+					//debug($a);
+					$this->Auth->login($a);
+					$this->Session->setFlash('Регистрация прошла успешно',null,true);
+					$this->redirect( array('controller' => 'pages', 'action' => 'index') );
+	               	//$this->redirect('/users/thanks');
+	         	} else {
+	         		// Failed, clear password field
+					$this->data['User']['password1'] = null;
+					$this->data['User']['password2'] = null;
+					$this->Session->setFlash('Новый аккаунт не был создан');
+				}
 		} else {
 			if( !is_null( $this->Session->read('Auth.User.username') ) ) {
 				$this->redirect($this->Auth->redirect());
@@ -141,7 +164,7 @@ class UsersController extends AppController {
 		
 		// Send email
 		if(!$this->__sendNewPasswordEmail( $user, $password) ) {
-			$this->flash('Internal server error during sending mail', 'restore', 10);
+			$this->flash('Internal server error during sending mail', 'password_reset', 10);
 		}
 		else {
 			$this->flash('New password sent to '.$user['User']['email'].'. Please login', '/users/login', 10);
@@ -169,46 +192,83 @@ class UsersController extends AppController {
 	}     
 //--------------------------------------------------------------------
 	function edit($id = null) {
+		App::import('Sanitize');
+		$this->data = Sanitize::clean($this->data);
+		$id = (int)Sanitize::paranoid($id);
+		
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash('Invalid User');
-			$this->redirect(array('action'=>'index'), null, true);
+			$this->redirect(array('controller'=>'pages','action'=>'index'), null, true);
 		}
-		if (!empty($this->data)) {
-			$this->cleanUpFields();
-			if ($this->User->save($this->data)) 
-            {
-                // we might have to reset the parent aro
-				$this->Session->setFlash('The User has been saved');
-				$this->redirect(array('action'=>'index'), null, true);
-			} else {
-				$this->Session->setFlash('The User could not be saved. Please, try again.');
+		if ($this->Auth->user('group_id') > 1) {
+			$id = $this->Auth->user('id');
+		}
+			if (!empty($this->data)) {
+				if ($this->User->save($this->data)) {
+					$this->Session->setFlash('Изменения сохранены');
+					$this->redirect(array('action'=>'view',$id ), null, true);
+				} else {
+					$this->Session->setFlash('Изменения не были сохранены');
+				}
 			}
-		}
-		if (empty($this->data)) 
-        {
+		
+		
+		if (empty($this->data)) {
 			$this->data = $this->User->read(null, $id);
 		}
-		$roles = $this->User->Role->find('list');
-		$this->set(compact('roles'));
-	}
 
+	}
+//--------------------------------------------------------------------
+	function newpassword($id = null) {
+		App::import('Sanitize');
+		$this->data = Sanitize::clean($this->data);
+		$id = (int)Sanitize::paranoid($id);
+		
+		if (!$id && empty($this->data)) {
+			$this->Session->setFlash('Invalid User');
+			$this->redirect(array('controller'=>'pages','action'=>'index'), null, true);
+		}
+		if ($this->Auth->user('group_id') > 1) {
+			$id = $this->Auth->user('id');
+		}
+			if (!empty($this->data)) {
+				if( $this->User->save( $this->data, true, array( 'password','password1','password2') ) ) {
+					$this->Session->setFlash('Пароль изменен');
+					$this->redirect(array('action'=>'view',$id ), null, true);
+				} else {
+					$this->Session->setFlash('Пароль не был изменен');
+				}
+			}
+		
+		
+		if (empty($this->data)) {
+			$this->data = $this->User->read(null, $id);
+		}
+
+	}
 //-------------------------------------------------------------------- 
 	function delete($id = null) {
 		if (!$id) {
 			$this->Session->setFlash('Invalid id for User');
 			$this->redirect(array('action'=>'index'), null, true);
 		}
+		
+		
 		if ( $this->User->del($id) ) {
-			$this->Session->setFlash('User #'.$id.' deleted');
+			$this->Session->setFlash('Пользователь #'.$id.' удален');
 			$this->redirect(array('action'=>'index'), null, true);
 		}
 	}
 //--------------------------------------------------------------------
 	function view($id = null) {
-
+		App::import('Sanitize');
+		$id = (int)Sanitize::paranoid($id);
 		if (!$id) {
 			$this->Session->setFlash('Invalid User.');
 			$this->redirect(array('action'=>'index'), null, true);
+		}
+		if ($this->Auth->user('group_id') > 1) {
+			$id = $this->Auth->user('id');
 		}
 		$this->set('user', $this->User->read(null, $id));
 //		$temp = $this->User->read(null, $id);
