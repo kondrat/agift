@@ -131,9 +131,11 @@
 						$session->flash();
 						echo '</div>';						
 				}
+				/*
 				if ($session->check('Message.auth')) {						
 						$session->flash('auth',array('class'=>'error-message'));							
-				}				
+				}
+				*/				
 			?>
 		</cake:nocache>
 			<?php echo $content_for_layout; ?>

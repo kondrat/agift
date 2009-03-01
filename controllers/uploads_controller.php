@@ -29,25 +29,13 @@ class UploadsController extends AppController
 			$this->Session->setFlash('Invalid File');
 			$this->redirect(array('controller'=>'pages','action'=>'index'), null, true);
 		}
-			$fileToDel = $this->FileUpload->find('first',array('FileUpload.id'=> $id) ) ;
+			$fileToDel = $this->FileUpload->find('first',array('conditions' => array('FileUpload.id'=> $id, 'FileUpload.session_id'=> $this->Session->read('userCart.tempSession') ) ) ) ;
 			
-			if($this->FileUpload->del($id) ) {
-				//$this->Session->setFlash( 'Файл был удален', 'default', array('class' => null) );
-				if ( $files = $this->Session->read('userCart.uploadData') ) {
-					foreach( $files as $k => $file ) {
-						if( $file['file_id'] == $id ) {
-							unset($files[$k]);
-							$this->Session->del('userCart.uploadData.'.$k);
-						}
-					}
-				}
+			if ($this->FileUpload->del($id) ) {
 						
 					$directory = TMP.'uploads'.DS.$fileToDel['FileUpload']['subdir'];
 					$this->__recursive_remove_directory($directory);
-				
-				
-				
-				
+						
 				$this->redirect($this->referer(),null,true );
 			} else {
 				//$this->Session->setFlash( 'Файл не был удален', 'default', array('class' => null) );

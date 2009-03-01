@@ -107,10 +107,10 @@
 
 <br><br>
 
-	<?php 	if( $session->check('userCart.uploadData') && $session->read('userCart.uploadData') != array() ) {
-				foreach ( $session->read('userCart.uploadData') as $uploadDataFile ) {
-					 echo '<p class= "file">'.$html->link($uploadDataFile['file_name'], array('controller'=>'Orders','action'=>'history','file:'.$uploadDataFile['file_id']) ).'</p>';
-					 echo '<p class= "delFile">'.$html->link('Удалить',array('controller'=>'uploads','action'=>'delete',$uploadDataFile['file_id']), array(), 'Подтверждаете удаление ?' ).'</p>';
+	<?php 	if( isset($files) && $files != array() ) {
+				foreach ( $files as $file ) {
+					 echo '<p class= "file">'.$html->link($file['FileUpload']['file_name'], array('controller'=>'Orders','action'=>'history','file:'.$file['FileUpload']['id']) ).'</p>';
+					 echo '<p class= "delFile">'.$html->link('Удалить',array('controller'=>'uploads','action'=>'delete',$file['FileUpload']['id']), array(), 'Подтверждаете удаление ?' ).'</p>';
 				}
 			}
 	?>

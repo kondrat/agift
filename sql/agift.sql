@@ -3,15 +3,15 @@
 # --------------------------------------------------------
 # Host:                         127.0.0.1
 # Database:                     agift
-# Server version:               5.1.23-rc-community
+# Server version:               5.0.6-beta-nt
 # Server OS:                    Win32
-# Target compatibility:         mysqldump+mysqlcli 5.0
+# Target compatibility:         HeidiSQL w/ MySQL Server 4.0
 # Target max_allowed_packet:    1048576
 # HeidiSQL version:             4.0 RC3
-# Date/time:                    2009-02-27 21:36:51
+# Date/time:                    2009-03-01 14:27:17
 # --------------------------------------------------------
 
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0*/;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;*/
 
 
 #
@@ -24,24 +24,38 @@ USE `agift`;
 
 
 #
+# Table structure for table 'artest'
+#
+
+CREATE TABLE /*!32312 IF NOT EXISTS*/ `artest` (
+  `id` tinyint(3) unsigned NOT NULL auto_increment,
+  `title` varchar(200) default NULL,
+  `body` text,
+  PRIMARY KEY  (`id`),
+  FULLTEXT KEY `NewIndex` (`body`,`title`)
+) TYPE=MyISAM;
+
+
+
+#
 # Table structure for table 'categories'
 #
 
 CREATE TABLE /*!32312 IF NOT EXISTS*/ `categories` (
-  `id` int(5) NOT NULL AUTO_INCREMENT,
-  `parent_id` int(10) NOT NULL DEFAULT '0',
-  `lft` int(10) unsigned DEFAULT NULL,
-  `rght` int(10) unsigned DEFAULT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '1',
-  `supplier` int(3) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(250) NOT NULL DEFAULT '',
-  `description` varchar(250) DEFAULT NULL,
+  `id` int(5) NOT NULL auto_increment,
+  `parent_id` int(10) NOT NULL default '0',
+  `lft` int(10) unsigned default NULL,
+  `rght` int(10) unsigned default NULL,
+  `active` tinyint(1) NOT NULL default '1',
+  `supplier` int(3) unsigned NOT NULL default '0',
+  `name` varchar(250) NOT NULL default '',
+  `description` varchar(250) default NULL,
   `images` text,
-  `page` int(10) unsigned DEFAULT NULL,
-  `created` datetime DEFAULT NULL,
-  `modified` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=237 DEFAULT CHARSET=utf8;
+  `page` int(10) unsigned default NULL,
+  `created` datetime default NULL,
+  `modified` datetime default NULL,
+  PRIMARY KEY  (`id`)
+) TYPE=InnoDB;
 
 
 
@@ -52,7 +66,7 @@ CREATE TABLE /*!32312 IF NOT EXISTS*/ `categories` (
 CREATE TABLE /*!32312 IF NOT EXISTS*/ `categories_gifts` (
   `category_id` int(10) unsigned NOT NULL,
   `gift_id` int(10) unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) TYPE=InnoDB;
 
 
 
@@ -61,17 +75,17 @@ CREATE TABLE /*!32312 IF NOT EXISTS*/ `categories_gifts` (
 #
 
 CREATE TABLE /*!32312 IF NOT EXISTS*/ `file_uploads` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(11) unsigned NOT NULL auto_increment,
   `file_name` varchar(250) NOT NULL,
   `mime_type` varchar(32) NOT NULL,
   `file_size` varchar(50) NOT NULL,
   `subdir` varchar(25) NOT NULL,
-  `order_id` int(10) DEFAULT NULL,
-  `session_id` int(10) unsigned DEFAULT NULL,
-  `created` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8;
+  `order_id` int(10) default NULL,
+  `session_id` int(10) unsigned default NULL,
+  `created` datetime default NULL,
+  `modified` datetime default NULL,
+  PRIMARY KEY  (`id`)
+) TYPE=InnoDB;
 
 
 
@@ -80,12 +94,12 @@ CREATE TABLE /*!32312 IF NOT EXISTS*/ `file_uploads` (
 #
 
 CREATE TABLE /*!32312 IF NOT EXISTS*/ `gift_attachments` (
-  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `id` tinyint(3) unsigned NOT NULL auto_increment,
   `gift_id` int(10) unsigned NOT NULL,
-  `file` varchar(250) DEFAULT NULL,
-  `marking_note` varchar(250) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `file` varchar(250) default NULL,
+  `marking_note` varchar(250) default NULL,
+  PRIMARY KEY  (`id`)
+) TYPE=InnoDB;
 
 
 
@@ -94,25 +108,25 @@ CREATE TABLE /*!32312 IF NOT EXISTS*/ `gift_attachments` (
 #
 
 CREATE TABLE /*!32312 IF NOT EXISTS*/ `gifts` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL auto_increment,
   `code` varchar(50) NOT NULL,
   `supplier` int(9) unsigned NOT NULL,
   `name` text,
-  `color` varchar(50) DEFAULT NULL,
+  `color` varchar(50) default NULL,
   `material` text,
   `size` text,
-  `packsize` varchar(150) DEFAULT NULL,
-  `packqty` int(10) unsigned DEFAULT NULL,
-  `packtype` varchar(150) DEFAULT NULL,
-  `weight` float unsigned DEFAULT NULL,
+  `packsize` varchar(150) default NULL,
+  `packqty` int(10) unsigned default NULL,
+  `packtype` varchar(150) default NULL,
+  `weight` float unsigned default NULL,
   `content1` text,
   `content2` text,
-  `price` float(9,2) unsigned DEFAULT '0.00',
-  `old_id` int(10) unsigned DEFAULT NULL,
-  `created` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`),
+  `price` float(9,2) unsigned default '0.00',
+  `old_id` int(10) unsigned default NULL,
+  `created` datetime NOT NULL default '0000-00-00 00:00:00',
+  PRIMARY KEY  (`id`),
   UNIQUE KEY `code` (`code`,`supplier`)
-) ENGINE=MyISAM AUTO_INCREMENT=9398 DEFAULT CHARSET=utf8;
+) TYPE=MyISAM;
 
 
 
@@ -121,10 +135,10 @@ CREATE TABLE /*!32312 IF NOT EXISTS*/ `gifts` (
 #
 
 CREATE TABLE /*!32312 IF NOT EXISTS*/ `groups` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(64) character set utf8 collate utf8_unicode_ci NOT NULL,
+  PRIMARY KEY  (`id`)
+) TYPE=InnoDB;
 
 
 
@@ -133,12 +147,12 @@ CREATE TABLE /*!32312 IF NOT EXISTS*/ `groups` (
 #
 
 CREATE TABLE /*!32312 IF NOT EXISTS*/ `images` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL auto_increment,
   `gift_id` int(10) unsigned NOT NULL,
-  `img` varchar(250) DEFAULT NULL,
-  PRIMARY KEY (`id`),
+  `img` varchar(250) default NULL,
+  PRIMARY KEY  (`id`),
   KEY `img` (`img`)
-) ENGINE=InnoDB AUTO_INCREMENT=11652 DEFAULT CHARSET=utf8;
+) TYPE=InnoDB;
 
 
 
@@ -147,16 +161,16 @@ CREATE TABLE /*!32312 IF NOT EXISTS*/ `images` (
 #
 
 CREATE TABLE /*!32312 IF NOT EXISTS*/ `line_items` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) NOT NULL DEFAULT '0',
-  `gift_id` int(11) NOT NULL DEFAULT '0',
-  `product` varchar(255) NOT NULL DEFAULT '',
-  `quantity` int(11) NOT NULL DEFAULT '1',
-  `price` decimal(19,8) DEFAULT '0.00000000',
-  `created` datetime DEFAULT NULL,
-  `modified` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=193 DEFAULT CHARSET=utf8;
+  `id` int(11) NOT NULL auto_increment,
+  `order_id` int(11) NOT NULL default '0',
+  `gift_id` int(11) NOT NULL default '0',
+  `product` varchar(255) NOT NULL default '',
+  `quantity` int(11) NOT NULL default '1',
+  `price` decimal(19,8) default '0.00000000',
+  `created` datetime default NULL,
+  `modified` datetime default NULL,
+  PRIMARY KEY  (`id`)
+) TYPE=InnoDB;
 
 
 
@@ -165,13 +179,13 @@ CREATE TABLE /*!32312 IF NOT EXISTS*/ `line_items` (
 #
 
 CREATE TABLE /*!32312 IF NOT EXISTS*/ `news` (
-  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `id` tinyint(3) unsigned NOT NULL auto_increment,
   `name` varchar(150) NOT NULL,
   `shortbody` text NOT NULL,
   `mainbody` text,
   `created` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+  PRIMARY KEY  (`id`)
+) TYPE=InnoDB;
 
 
 
@@ -180,22 +194,22 @@ CREATE TABLE /*!32312 IF NOT EXISTS*/ `news` (
 #
 
 CREATE TABLE /*!32312 IF NOT EXISTS*/ `orders` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `status` int(3) unsigned DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `session_id` varchar(250) DEFAULT NULL,
-  `number` int(11) DEFAULT '0',
-  `ip` varchar(100) DEFAULT NULL,
-  `firstname` varchar(64) DEFAULT '',
-  `email` varchar(64) DEFAULT '',
-  `phone` varchar(32) DEFAULT '',
+  `id` int(11) NOT NULL auto_increment,
+  `status` int(3) unsigned default NULL,
+  `user_id` int(11) default NULL,
+  `session_id` varchar(250) default NULL,
+  `number` int(11) default '0',
+  `ip` varchar(100) default NULL,
+  `firstname` varchar(64) default '',
+  `email` varchar(64) default '',
+  `phone` varchar(32) default '',
   `addInfo` text,
-  `total_price` decimal(19,8) DEFAULT NULL,
-  `line_item_count` int(10) unsigned DEFAULT NULL,
-  `created` datetime DEFAULT NULL,
-  `modified` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=153 DEFAULT CHARSET=utf8;
+  `total_price` decimal(19,8) default NULL,
+  `line_item_count` int(10) unsigned default NULL,
+  `created` datetime default NULL,
+  `modified` datetime default NULL,
+  PRIMARY KEY  (`id`)
+) TYPE=InnoDB;
 
 
 
@@ -204,24 +218,24 @@ CREATE TABLE /*!32312 IF NOT EXISTS*/ `orders` (
 #
 
 CREATE TABLE /*!32312 IF NOT EXISTS*/ `users` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `group_id` int(11) NOT NULL DEFAULT '0',
-  `password` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `email` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `contact` varchar(50) DEFAULT NULL,
-  `phone` varchar(50) DEFAULT NULL,
-  `company` varchar(50) DEFAULT NULL,
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `username` varchar(64) character set utf8 collate utf8_unicode_ci NOT NULL default '',
+  `group_id` int(11) NOT NULL default '0',
+  `password` varchar(64) character set utf8 collate utf8_unicode_ci NOT NULL default '',
+  `email` varchar(100) character set utf8 collate utf8_unicode_ci NOT NULL default '',
+  `contact` varchar(50) default NULL,
+  `phone` varchar(50) default NULL,
+  `company` varchar(50) default NULL,
   `business` text,
-  `website` varchar(250) DEFAULT NULL,
+  `fax` varchar(50) default NULL,
+  `website` varchar(250) default NULL,
   `address1` text,
   `address2` text,
   `bank_detail` text,
-  `active` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `created` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `birthday` date DEFAULT NULL,
-  PRIMARY KEY (`id`),
+  `active` tinyint(1) unsigned NOT NULL default '0',
+  `created` datetime default NULL,
+  PRIMARY KEY  (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) TYPE=InnoDB;
 
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS*/;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;*/

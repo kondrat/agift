@@ -13,7 +13,7 @@ class OrdersController extends AppController {
  */
 
 	function beforeFilter () {
-        $this->Auth->allow('index','add','clean', 'checkout', 'step2');
+        $this->Auth->allow('index','add','clean','history', 'checkout', 'step2');
         parent::beforeFilter(); 
         $this->Auth->autoRedirect = false;
 
@@ -22,6 +22,13 @@ class OrdersController extends AppController {
 	
 	//----------------------------------------------------------------
 	function index() {
+		$files = array();
+		if ( $tempSession = $this->Session->read('userCart.tempSession') ) {
+			$files = $this->FileUpload->find('all', array('conditions'=> array('FileUpload.session_id'=> $tempSession ),'fields'=>array('FileUpload.id','FileUpload.file_name'),'contain'=>false ) );
+			if ( $files != array() ) {
+				$this->set('files' ,$files );
+			}
+		}
 			
 		if( $orders = $this->Session->read('Order') ) {
 			$i=0;
@@ -98,43 +105,12 @@ class OrdersController extends AppController {
 				$temp = $this->params['named']['file'];
 				
 				$logos = $this->FileUpload->find('first', array('conditions' => array('FileUpload.id' => $temp) ) );
-				//debug($logos);	
-
-				
+				//debug($logos);					
 					$filename = $logos['FileUpload']['file_name'];
-					$myFile = TMP.'uploads'.DS.$logos['FileUpload']['subdir'].DS.$logos['FileUpload']['file_name'];
-				
+					$myFile = TMP.'uploads'.DS.$logos['FileUpload']['subdir'].DS.$logos['FileUpload']['file_name'];				
 					$mm_type = $logos['FileUpload']['mime_type'];
-					/*
-					$this->view = 'Media';
-					$params = array(
-								'id' => $logos['FileUpload']['file_name'],
-								'name' => 'example',
-								'download' => true,
-								'extension' => 'JPG',
-								'path' => TMP.'uploads'.DS.$logos['FileUpload']['subdir'].DS.$logos['FileUpload']['file_name'],
-								'mimeType' => array('JPG' => 'image/jpeg'),
-							);
-					$this->set($params);
-					*/
-				//* old vresion we are using media-view instead
-				if ( file_exists($myFile)  ) {
-					header("Cache-Control: public, must-revalidate");
-					header("Pragma: hack");
-					header("Expires: 0");
-					header("Content-Type: " . $mm_type.'"');
-					header("Content-Length: " .(string)(filesize($myFile)) );
-					header('Content-Disposition: attachment; filename="'.$filename.'"');
-					header("Content-Transfer-Encoding: binary\n");
-				
-					readfile($myFile);
-					exit;
-					//*/
-				} else {
-					$this->Session->setFlash( 'Данный файл был удален', 'default', array('class' => null) );
-				}
-				
-				
+					$this->__getFile($myFile,$mm_type,$filename );
+								
 		}
 			$this->paginate['order']['created'] = 'desc';
 			if( $this->Auth->user('group_id') > 1 ) {
@@ -145,12 +121,53 @@ class OrdersController extends AppController {
 				$this->set( 'historyOrderUser', $this->paginate() );				
 			}
 			
-		
-		
+		}elseif ( $this->Session->check('userCart.tempSession') && !$this->Auth->user('id') ) {
+			if( isset($this->params['named']['file']) ) {
+				$temp = $this->params['named']['file'];
+				$logos = $this->FileUpload->find('first', array('conditions' => array('FileUpload.id' => $temp,'FileUpload.session_id' => $this->Session->read('userCart.tempSession') ) ) );
+				$filename = $logos['FileUpload']['file_name'];
+				$myFile = TMP.'uploads'.DS.$logos['FileUpload']['subdir'].DS.$logos['FileUpload']['file_name'];				
+				$mm_type = $logos['FileUpload']['mime_type'];
+				$this->__getFile($myFile,$mm_type,$filename );
+			}
 		} else {
 			$this->redirect( $this->Auth->redirect() );
 		}
 	}
+	//-------------------------
+	function __getFile($myFile,$mm_type,$filename ) {
+			/*
+			$this->view = 'Media';
+			$params = array(
+						'id' => $logos['FileUpload']['file_name'],
+						'name' => 'example',
+						'download' => true,
+						'extension' => 'JPG',
+						'path' => TMP.'uploads'.DS.$logos['FileUpload']['subdir'].DS.$logos['FileUpload']['file_name'],
+						'mimeType' => array('JPG' => 'image/jpeg'),
+					);
+			$this->set($params);
+			*/
+		//* old vresion we are using media-view instead
+		if ( file_exists($myFile)  ) {
+			header("Cache-Control: public, must-revalidate");
+			header("Pragma: hack");
+			header("Expires: 0");
+			header("Content-Type: " . $mm_type.'"');
+			header("Content-Length: " .(string)(filesize($myFile)) );
+			header('Content-Disposition: attachment; filename="'.$filename.'"');
+			header("Content-Transfer-Encoding: binary\n");
+			
+			readfile($myFile);
+			$this->redirect($this->referer(),null, true );
+			//*/
+		} else {
+			$this->Session->setFlash( 'Данный файл был удален', 'default', array('class' => null) );
+		}
+		
+	}
+	
+	
 	//----------------------------------------------------------------
     /**
      * handle upload of files and submission info
@@ -268,9 +285,7 @@ class OrdersController extends AppController {
         
                     // set the upload directory
                     //$uploadDir = realpath(TMP);
-                    $uploadDir = TMP. 'uploads' . DS;
-                    //$uploadDir = 'c:'.DS.'x';
-        
+                    $uploadDir = TMP. 'uploads' . DS;     
                     // settings for component
                     //$this->FileHandler->setAllowedMime($allowedMime);
                     $this->FileHandler->setDebugLevel(1);
@@ -287,15 +302,8 @@ class OrdersController extends AppController {
                          * empty uploads in your own way
                          */
                         //$this->set('uploadData', $this->FileHandler->getLastUploadData());
-                        $uploadData = $this->FileHandler->getLastUploadData();
-                        if ( $this->Session->check('userCart.uploadData') ) {
-							$i = count($this->Session->read('userCart.uploadData'));
-							$this->Session->write('userCart.uploadData.'.$i,  $uploadData['0'] );
-							$this->Session->write('userCart.uploadData.'.$i.'.file_id',  $this->FileUpload->id );
-                        } else {
-                        	$this->Session->write('userCart.uploadData.0',  $uploadData['0'] );
-                        	$this->Session->write('userCart.uploadData.0.file_id',  $this->FileUpload->id );
-                        }
+                        //$uploadData = $this->FileHandler->getLastUploadData();
+                        
          				$this->Session->setFlash("Логотип загружен",'default', array('class' => 'nomargin flash'));
                         $this->redirect( array('action' => 'index'),null,true );
                     } else {
@@ -439,7 +447,7 @@ class OrdersController extends AppController {
 	}   
 //-------------------------------------------------------------------- 
   	function isAuthorized() {
-        if ($this->action == 'delete' || $this->action == 'history') {
+        if ($this->action == 'delete' ) {
             if ($this->Auth->user('id')) {
                 return true;
             } else {
