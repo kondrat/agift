@@ -104,7 +104,7 @@ class CategoriesController extends AppController {
 //--------------------------------------------------------------------
 
     function oasis(){
-    	//$this->cacheAction = "10000 hours";
+    	$this->cacheAction = "10000 hours";
     	//some vars init.
 		$cat = array();
 		$pageOutput = null;

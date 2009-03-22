@@ -67,11 +67,12 @@
 	    		<tr>
 	    			<td height="40"><b>Цена без нанесения:</b></td>
 	    			<td>
-	    			<?php echo $total_price[] = $order['Gift']['price']*(int)$order['LineItem']['quantity']; ?>
-	    			руб.</td>
+	    				<?php echo $total_price[] = $order['Gift']['price']*(int)$order['LineItem']['quantity']; ?>
+	    				руб.
+	    			</td>
 	    		</tr>
 	    	</table>
-	
+			<?php echo $html->link('Отчистить', array('controller'=>'orders','action'=>'clean',$order['Gift']['id']) );?>
 		</td>
 	
 		</tr>
@@ -106,8 +107,13 @@
 
 <br><br>
 
-
-
+	<?php 	if( isset($files) && $files != array() ) {
+				foreach ( $files as $file ) {
+					 echo '<p class= "file">'.$html->link($file['FileUpload']['file_name'], array('controller'=>'Orders','action'=>'history','file:'.$file['FileUpload']['id']) ).'</p>';
+					 echo '<p class= "delFile">'.$html->link('Удалить',array('controller'=>'uploads','action'=>'delete',$file['FileUpload']['id']), array(), 'Подтверждаете удаление ?' ).'</p>';
+				}
+			}
+	?>
 <b>Загрузка логотипа:</b> 
 
 		<input type="file" size="28" name="userfile[]"/>
