@@ -5,6 +5,7 @@ class AppController extends Controller {
     var $publicControllers = array('pages', 'test');
    // var $uses = array('Order');
    	var $subheaderTitle = 'Alfa Gifts - сувенирная продукция';
+	var $persistModel = true;
 //--------------------------------------------------------------------
 	function beforeFilter() {
         if(isset($this->Auth)) {
@@ -34,6 +35,11 @@ class AppController extends Controller {
             }
         } 
 		
+		
+
+		
+	}
+	
 		function isAuthorized() {
 		    if ($this->Auth->user('group_id') == '1') {
 		        return true;
@@ -42,8 +48,6 @@ class AppController extends Controller {
 		    }
 			return true;
 		}
-
-	}
 //--------------------------------------------------------------------
 
 	function beforeRender() {

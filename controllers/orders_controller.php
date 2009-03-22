@@ -157,6 +157,7 @@ class OrdersController extends AppController {
 						$this->data['Order']['addInfo'] = $this->Session->read('userCart.addInfo');
 						$this->data['Order']['total_price'] = $this->Session->read('userCart.totalPrice');
 						$this->Order->create();
+						
 						if ( $this->Order->save($this->data['Order'],false) ) {
 							$uploaded = array();
 							if( $uploaded = $this->Order->FileUpload->find('all',array('conditions'=> array('FileUpload.session_id'=> $this->Session->read('userCart.tempSession')),'fields'=> array('FileUpload.id'),'contain'=>false ) ) ) {
@@ -289,6 +290,7 @@ class OrdersController extends AppController {
     //----------------------------------------------------------------
     //checkout for unreged user.
 	function step2() {
+		$this->data = Sanitize::clean( $this->data );
 		if ( !empty($this->data) && isset($this->params['form']['next_step']) ) {
 
 			$this->data['Order']['addInfo'] = $this->Session->read('userCart.addInfo');
@@ -296,6 +298,11 @@ class OrdersController extends AppController {
 			$this->data['Order']['ip'] = $this->RequestHandler->getClientIP();
 			$this->data['Order']['session_id'] = $this->Session->read('userCart.tempSession');
 			$this->data['Order']['total_price'] = $this->Session->read('userCart.totalPrice');
+			
+			
+			
+			
+			
 			
 			if ( $this->Order->save($this->data['Order']) ) {	
 					$uploaded = array();
@@ -333,10 +340,10 @@ class OrdersController extends AppController {
 
 
 			} else {
-				$this->Session->del('Order');
-        		$this->Session->del('userCart');
+				//$this->Session->del('Order');
+        		//$this->Session->del('userCart');
 				$this->Session->setFlash( 'Заказ не был сформирован', 'default', array('class' => null) );
-				$this->redirect( '/',null,true );;
+				//$this->redirect( '/',null,true );;
 				$this->render('checkout');
 			}
 		}				

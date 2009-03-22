@@ -19,6 +19,6 @@
 <?php echo $form->end('Сохранить');?>
 </div>
 <p>
-	<?php echo $html->link('Все новости', array('action'=>'index')); ?>
+	<?php echo $html->link('Все новости', array('action'=>'index'), array('class' => 'header_news')); ?>
 </p>
 

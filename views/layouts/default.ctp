@@ -104,14 +104,14 @@
 
 	<div class="mainblock">
 	
-		<div class="pen"><?php echo $html->image('pen.gif', array('border' => '0') );?></div>
+		<div class="pen"><?php // echo $html->image('pen.gif', array('border' => '0') );?></div>
 		
 		<div class="content">	
 
 		<cake:nocache>
 			<?php 
 				
-					if( $session->check('userCart.countTempOrders')  ) {
+					if( $session->check('userCart.countTempOrders') ) {
 						echo '<div class="add" >';
 						echo $html->link( 'Товаров в корзине: ', array('controller' => 'orders', 'action' => 'index'), array('style' => "text-decoration: none; color: red;" ) );
 						echo $session->read('userCart.countTempOrders');
@@ -125,16 +125,17 @@
 
 
 		<cake:nocache>
-			<?php
-			
-				if ($session->check('Message.flash')):
-				
+			<?php	
+				if ($session->check('Message.flash')) {				
 						echo '<br /><div class="add">';
 						$session->flash();
-						echo '</div>';
-						
-				endif;
-				
+						echo '</div>';						
+				}
+				/*
+				if ($session->check('Message.auth')) {						
+						$session->flash('auth',array('class'=>'error-message'));							
+				}
+				*/				
 			?>
 		</cake:nocache>
 			<?php echo $content_for_layout; ?>

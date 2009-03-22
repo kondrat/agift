@@ -14,14 +14,17 @@ class Order extends AppModel {
 	var $actsAs = array('Containable');
 	var $validate = array(
 							
-							'firstname' => array( 'alphaNumeric' => array( 
+							'firstname' => array( 
+												/*
+												'alphaNumeric' => array( 
 																		'rule' => 'alphaNumeric',
 																		'required' => true,
 																		'message' => 'Только буквы и цифры'
 																		),
+												*/
 												'betweenRus' => array(
-																	'rule' => array( 'betweenRus', 6, 15, 'firstname'),
-																	'message' => 'От 6 до 15 букв'
+																	'rule' => array( 'betweenRus', 3, 15, 'firstname'),
+																	'message' => 'От 3 до 15 букв'
 																	),
 												),
 							'phone' => array(
@@ -35,7 +38,7 @@ class Order extends AppModel {
 												
 												*/
 												'between' => array(
-																	'rule' => array( 'between', 6, 20),
+																	'rule' => array( 'between', 3, 20),
 																	'message' => 'Неправильный телефон'
 																	)
 											),

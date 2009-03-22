@@ -360,7 +360,7 @@ a.opacity:hover img {
 	/*margin-left: 95px;*/
 	margin-right: 10px;
 	float: left;
-	width: 250px;
+	width: 240px;
 	height: 100%;
 	font-family: Arial, Verdana, Helvetica, Sans-serif;
 	text-align: left;
@@ -458,7 +458,7 @@ a.redbold  {
 /* wrapper for the gifts output in oasis_gifts */
 .giftsList{
 	float: left;
-	width:550px;
+	width:570px;
 }
 /*paginator class*/
 .menu2 {
@@ -514,4 +514,39 @@ div.menu2 {
        font-size: 12pt;
        font-weight: normal;
        margin-right: 40px;
+		 color: #000000;
+		 text-decoration: none;
+}
+/*--error class--*/
+.error-message {
+	color: red;
+	font-weight: bold;
+}
+/*--- more classes ----*/
+.altrow {
+	background-color: #eee;
+}
+.x {
+	margin: 5px 10px;
+}
+div.input label {
+	float: left;
+}
+.actions {
+	margin: 0;
+	font-size: 12px;
+}
+.actions a {
+	text-decoration:none;
+	color: #000;
+}
+.actions a:hover {
+	text-decoration: underline;
+}
+p.file {
+	margin:0 0 3px 0;
+}
+p.delFile {
+	margin:0 0 10px 0;
+	font-size: 13px;
 }

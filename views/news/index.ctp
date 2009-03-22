@@ -13,7 +13,7 @@
 <?php endif ?>	
 	
 	<?php foreach($listNews as $list): ?>
-	<?php echo $html->link( date( 'd.m.y', strtotime($list['News']['created']) ).' '.$list['News']['name'] , array('controller' => 'News', 'action' => 'view', $list['News']['id']), array('class' => 'menulup') ) ;?>
+	<?php echo $html->link( date( 'd.m.y', strtotime($list['News']['created']) ).' '.$list['News']['name'] , array('controller' => 'News', 'action' => 'view', $list['News']['id']), array('class' => 'header_news') ) ;?>
 	<? if ( in_array($session->read('Auth.User.group_id'), array(1,2,3) ) ): ?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<?php echo $html->link('Удалить новость', array('action'=>'delete', $list['News']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $list['News']['id'])); ?>
@@ -21,7 +21,8 @@
 		<?php echo $html->link('Редактировать новость', array('action'=>'edit', $list['News']['id'])); ?>
 	<? endif ?>
 	<br />
-	<?php echo $html->link( $list['News']['shortbody'], array('controller' => 'News', 'action' => 'view', $list['News']['id']), array('class' => 'menul') ); ?>
+	<?php echo $html->link( $list['News']['shortbody'], array('controller' => 'News', 'action' => 'view', $list['News']['id']), array('class' => 'body_news') ); ?>
+	<br />
 	<br />
 	<?php endforeach ?>
 
