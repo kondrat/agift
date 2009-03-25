@@ -208,7 +208,11 @@ class OrdersController extends AppController {
 									$this->FileUpload->id = null;
 								}
 							}
-							$forEmailLineItems = $this->LineItem->saveLineItems( $this->Session->read('Order'),$this->Order->id );
+					
+							$this->Order->bindModel( array('belongsTo' => array('User' => array('className' => 'User') ) ) );
+												
+							$forEmailLineItems['Order'] = $this->Order->find('first', array('conditions'=>array('Order.id' => $this->Order->id ),'contain'=>array('FileUpload','User') ) );	
+							$forEmailLineItems['itmes'] = $this->LineItem->saveLineItems( $this->Session->read('Order'),$this->Order->id );
 							$this->Session->del('Order');
         					$this->Session->del('userCart');						
 							//debug($forEmailLineItems);
@@ -323,6 +327,7 @@ class OrdersController extends AppController {
     //----------------------------------------------------------------
     //checkout for unreged user.
 	function step2() {
+		App::import('Sanitize');
 		$this->data = Sanitize::clean( $this->data );
 		if ( !empty($this->data) && isset($this->params['form']['next_step']) ) {
 
@@ -332,8 +337,14 @@ class OrdersController extends AppController {
 			$this->data['Order']['session_id'] = $this->Session->read('userCart.tempSession');
 			$this->data['Order']['total_price'] = $this->Session->read('userCart.totalPrice');
 			
-			
-			
+			$forEmailOrder = array();
+			/*
+			$forEmailOrder['addInfo'] = $this->data['Order']['addInfo'];
+			$forEmailOrder['total_price'] = $this->data['Order']['session_id'];
+			$forEmailOrder['phone'] = $this->data['Order']['phone'];
+			$forEmailOrder['email'] = $this->data['Order']['email'];
+			$forEmailOrder['firstname'] = $this->data['Order']['firstname'];
+			*/
 			
 			
 			
@@ -347,8 +358,12 @@ class OrdersController extends AppController {
 							$this->FileUpload->id = null;
 						}
 					}
-											
-				$forEmailLineItems = $this->LineItem->saveLineItems( $this->Session->read('Order'),$this->Order->id );
+
+				$forEmailLineItems['Order'] = $this->Order->find('first', array('conditions'=>array('Order.id' => $this->Order->id ),'contain'=>array('FileUpload') ) );	
+														
+				$forEmailLineItems['items'] = $this->LineItem->saveLineItems( $this->Session->read('Order'),$this->Order->id );
+				
+				//debug($forEmailLineItems);
 				$this->Session->del('Order');
 				$this->Session->del('userCart');							
 				
@@ -440,14 +455,14 @@ class OrdersController extends AppController {
 			$this->set('forEmailLineItems', $forEmailLineItems );
 		}
        
-        $this->Email->to = 'dep'.'<info@tehnoavia.ru>';
+        $this->Email->to = 'Отдел продаж'.'<maxim@agift.ru>';
         //$this->Email->to = 'отдел'.'<a_kondrat@tehnoavia.ru>';
-        //$this->Email->cc = 'a_kondrat@tehnoavia.ru';
-       // $this->Email->bcc = array('info@tehnoavia.ru'); 
+        $this->Email->cc = array('web@imkg.ru');
+        $this->Email->bcc = array('4116457@mail.ru');
         $this->Email->subject = env('SERVER_NAME') . ' - New Order';
         $this->Email->from = 'noreply@' . env('SERVER_NAME');
         $this->Email->template = 'new_order';
-        $this->Email->sendAs = 'text';   // you probably want to use both :) 
+        $this->Email->sendAs = 'html';   // you probably want to use both :) 
         $this->Email->attachments = $attachment;
         //$this->Email->delivery = 'debug';  
         return $this->Email->send();

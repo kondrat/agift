@@ -460,6 +460,11 @@ a.redbold  {
 	float: left;
 	width:570px;
 }
+/* wrapper for the gifts search output in oasis_gifts */
+.giftsListSearch {
+	float: left;
+	width:770px;
+}
 /*paginator class*/
 .menu2 {
 	text-decoration: none;

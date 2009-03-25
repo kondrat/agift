@@ -24,7 +24,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 
 <html>
 <head>
@@ -32,8 +32,9 @@
 </head>
 
 <body>
+<font color="#ff0000"><b>ЗАКАЗ С САЙТА AGIFT.RU</b></font>
+<br/>
 	<?php echo $content_for_layout;?>
 
-	<p>This email was sent by the <span style="color:red">AlfaGifts group.</span></p>
 </body>
 </html>

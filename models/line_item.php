@@ -8,6 +8,7 @@ class LineItem extends AppModel {
 	var $actsAs = array('Containable');
 //--------------------------------------------------------------------
 	function saveLineItems( $items = array(), $orderId = null ) {
+		$outPut = array();
 		$i = 0;
 		foreach( $items as $item ) {
 			
@@ -25,6 +26,7 @@ class LineItem extends AppModel {
  			
  			$a = $this->Gift->find('first', array( 'conditions' => array('Gift.id'=> $outPut[$i]['gift_id']) ) ) ;
  			$outPut[$i]['code'] = $a['Gift']['code'];
+ 			$outPut[$i]['name'] = $a['Gift']['name'];
  			$i++;
 		}
 		return $outPut;			

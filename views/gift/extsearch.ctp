@@ -103,7 +103,8 @@
 	<br><br>
 		<?php echo $form->radio( 'priceOrder', array( 'asc' => 'Сортировать по возрастанию цены', 'desc' => 'Сортировать по убыванию цены' ), array('separator' => '<br />', 'label' => true)  );?>
 		
-	<br>
+	<br />
+	<br />
 	
 	
 		<?php echo $form->submit('/img/button.jpg', array ('class' => 'searchbutton', 'div' => false) ); ?>

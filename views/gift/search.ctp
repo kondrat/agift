@@ -15,7 +15,8 @@
 	</div>
 	<br />
 	<br />
-	<div class="giftsList" style="margin-left: 250px;">
+	<br />
+	<div class="giftsListSearch" style="margin-left: 50px;">
 	
 		<?php $i = 0; ?>
 		<?php foreach ($gifts as $gift): ?>
