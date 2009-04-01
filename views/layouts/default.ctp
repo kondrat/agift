@@ -13,7 +13,7 @@
 		
 		echo $javascript->link('jquery-1.2.6');	
 		echo $javascript->link('ag');
-
+		echo $javascript->link('csshorizontalmenu');
 		echo $scripts_for_layout;
 	?>
 
