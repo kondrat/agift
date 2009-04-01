@@ -23,7 +23,7 @@
 			    </ul>
 			
 			</li>
-			<li id="left1" class="big_fon"><span class="size_kn"><?php echo $html->link('ГЛАВНАЯ',array('controller'=>'pages','action'=>'company') );?></span></li>
+			<li id="left1" class="big_fon"><span class="size_kn"><?php echo $html->link('ГЛАВНАЯ',array('controller'=>'pages','action'=>'index') );?></span></li>
 			<li id="left0"><span class="size_kn"><a>КАТАЛОГИ</a></span></li>
 			
 			
