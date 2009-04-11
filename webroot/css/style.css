@@ -9,25 +9,26 @@
 .contentleft {
 	background-image: url(../img/fon.jpg);
 	width: 95px;
-	height: 138px;
+	height: 184px;
 	padding: 0px;
 	float:left;
 }
 	
 .contentcenter {
 	width: 200px;
-	height: 138px;
+	height: 184px;
 	padding:0px;
 	float:left;
 }
 	
 .contentright {
 	width: 692px;
-	height: 138px;
+	height: 184px;
 	padding:0px;
 	float:left;
 	border-right: 1px solid;
 	border-color: #dededc;
+	
 }
 .form {
 	position: absolute;
@@ -512,7 +513,6 @@ a.opacity:hover img {
 	text-decoration: underline;
 }
 .news {
-	position: relative;
 	width: 610px;
 	height: 34px;
 	background-image: url(../img/news_fon.jpg);
@@ -525,9 +525,9 @@ a.opacity:hover img {
 	text-decoration: none;
 }
 .newsimg {
-	position: absolute;
-	left: 0px;
-	top: 16px;
+	position: relative;
+	left: -597px;
+	top: -3px;
 }
 .newsblock {
 	width: 285px;

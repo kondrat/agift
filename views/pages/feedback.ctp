@@ -1,27 +1,30 @@
-<?php $this->pageTitle = 'Главная'; ?>
-<?php //$this->subheaderTitle = 'Главная'; ?>
+<?php $this->pageTitle = 'Отзывы'; ?>
+<?php //$this->subheaderTitle = 'Отзывы'; ?>
 
-	Наш адрес: г. Москва, Б. Пироговская д. 9а, Телефон/факс:(495) 9-600-900
-<br><br>
-<b>САЙТ НАХОДИТСЯ В СТАДИИ РАЗРАБОТКИ.</b><br>Приносим извинения за предоставленные неудобства.
 
-<br><br>
-<strong>Краткая информация о возможностях, нашей компании.</strong>
- <br><br>
- <font class="text">
-Наш опыт работы на рынке сувенирной продукции составляет десять лет, компания обладает широкими 
-возможностями по персонализации и производству.
- <br>
-Мы являемся сертифицированными партнерами компании "Круг Кронберг", и работаем с ее каталогами, в числе которых:
-<br><strong>"Oasis business gifts"</strong> - основной каталог, ориентированный прежде всего, 
-на предоставление широкого выбора оригинальных сувениров в различной ценовой категории.
-<br><strong>"Oasis exclusive"</strong> - элита подарков.
-<br> <strong>Penoteka</strong> - более 10 наименований известных марок, ручки на любой вкус и к любому случаю.
-Также, мы работаем с каталогами ПРОЕКТ 111, в числе которых:
-<br> <strong>"Проект main"</strong> - складской каталог, в нем представлен широкий выбор различных вариантов сувенирной продукции,
-в том числе и широкий выбор текстиля 
-<br> <strong>"Знаки внимания"</strong> - складской каталог, в нем, Вы найдете красивые и элегантные вещи на все случаи жизни.
-<br> Европейские каталоги, и продукция на заказ по индивидуальным проектам.
- <br><br> 
-Кроме этого, наша компания является эксклюзивным представителем GF FERRE  www.ferregifts.ru 
-</font>
+<br/><br/>
+<div align='center'>
+<a href='../../img/recomend/krug.jpg' target='_blank'><img src='../../img/recomend/small/krug.jpg' border='1'></a>
+</div>
+<br/><br/>
+<div class='feedback'>
+<a href='../../img/recomend/ag.jpg' target='_blank'><img src='../../img/recomend/small/ag.jpg' border='1'></a>
+</div>
+<div class='feedback'>
+<a href='../../img/recomend/cola.jpg' target='_blank'><img src='../../img/recomend/small/cola.jpg' border='1'></a>
+</div>
+<div class='feedback'>
+<a href='../../img/recomend/elesi.jpg' target='_blank'><img src='../../img/recomend/small/elesi.jpg' border='1'></a>
+</div>
+<div class='feedback'>
+<a href='../../img/recomend/ferre.jpg' target='_blank'><img src='../../img/recomend/small/ferre.jpg' border='1'></a>
+</div>
+<div class='feedback'>
+<a href='../../img/recomend/hawker.jpg' target='_blank'><img src='../../img/recomend/small/hawker.jpg' border='1'></a>
+</div>
+<div class='feedback'>
+<a href='../../img/recomend/kinomaks.jpg' target='_blank'><img src='../../img/recomend/small/kinomaks.jpg' border='1'></a>
+</div>
+<div class='feedback'>
+<a href='../../img/recomend/roche.jpg' target='_blank'><img src='../../img/recomend/small/roche.jpg' border='1'></a>
+</div>
